@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edward</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-tier="med">
+
+<div class="frame" aria-hidden="true"></div>
+
+<!-- wordmark: thin drawn letters, A without a crossbar -->
+<header class="brand">
+  <svg viewBox="-1 -1 245 22" role="img" aria-label="Edward" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linejoin="miter">
+    <title>Edward</title>
+    <path d="M14 0H0V20H14M0 10H12"/>                                                     <!-- E -->
+    <path transform="translate(43 0)" d="M0 0V20H5C13 20 15 15 15 10C15 5 13 0 5 0Z"/>    <!-- D -->
+    <path transform="translate(87 0)" d="M0 0L5.5 20L11 3L16.5 20L22 0"/>                 <!-- W -->
+    <path transform="translate(138 0)" d="M0 20L8.5 0L17 20"/>                            <!-- A -->
+    <path transform="translate(184 0)" d="M0 20V0H8C14.5 0 14.5 10 8 10H0M7 10L14 20"/>   <!-- R -->
+    <path transform="translate(228 0)" d="M0 0V20H5C13 20 15 15 15 10C15 5 13 0 5 0Z"/>   <!-- D -->
+  </svg>
+</header>
+
+<main class="center">
+  <div class="orb" aria-hidden="true"></div>
+  <button class="enter" id="enter" type="button" data-href="home.html" aria-label="Click to enter" disabled>
+    <span class="enter-big">CLICK</span>
+    <span class="enter-small">TO ENTER</span>
+  </button>
+</main>
+
+<footer class="foot">
+  <div class="tier">
+    <p class="foot-text">PERFORMANCE TIER: [<span id="tierName">MED</span>]</p>
+    <div class="tier-btns" role="radiogroup" aria-label="Performance tier">
+      <button type="button" role="radio" aria-checked="false" data-tier="high">HIGH</button>
+      <button type="button" role="radio" aria-checked="false" data-tier="med">MED</button>
+      <button type="button" role="radio" aria-checked="false" data-tier="saver">SAVER</button>
+    </div>
+  </div>
+
+  <div class="status" aria-live="polite">
+    <p class="foot-text"><span id="sysWord">SYSTEM LOADING</span> | [ACTIVE] | <span id="pct">0</span>%</p>
+    <p class="loaded" id="stageName">INIT_CORE</p>
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
