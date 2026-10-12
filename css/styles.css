@@ -1,0 +1,105 @@
+:root{
+  --display:"League Gothic","Bebas Neue","Arial Narrow",Impact,sans-serif;
+  --mono:"Roboto Mono","IBM Plex Mono","DejaVu Sans Mono",Menlo,Consolas,monospace;
+  --bg:#151516;
+  --grid:rgba(105,165,190,.17);
+  /* Scale unit: every size on this page is a multiple of --u (1.75px = like browser zoom 175%).
+     Change the 1.75px below to make everything bigger or smaller.
+     On big screens it keeps growing; on small or narrow windows it shrinks so the footer still fits on one row. */
+  --u:clamp(1px,calc(100vmin / 330),min(max(1.75px,calc(100vmin / 617)),calc(100vw / 480)));
+  --gap:calc(var(--u)*28);            /* grid cell size */
+  --orb:min(calc(var(--u)*250),56vmin);
+  --p:0;                 /* loader progress 0..1, set by script.js */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  position:relative;overflow:hidden;
+  font-family:var(--mono);color:#e6e6e6;-webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(ellipse at 50% 46%,rgba(0,0,0,0) 35%,rgba(0,0,0,.4) 100%),
+    linear-gradient(var(--grid) 1px,transparent 1px) calc(var(--u)*11) calc(var(--u)*10)/var(--gap) var(--gap),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px) calc(var(--u)*11) calc(var(--u)*10)/var(--gap) var(--gap),
+    var(--bg);
+  transition:opacity .5s ease;
+}
+body.leaving{opacity:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+.frame{position:absolute;inset:calc(var(--u)*10);border:1px solid rgba(255,255,255,.24);pointer-events:none}
+
+/* wordmark */
+.brand{position:absolute;left:0;right:0;top:13.3vh;transform:translateY(-50%);display:flex;justify-content:center;color:#d4d4d4}
+.brand svg{width:min(calc(var(--u)*240),80vw);height:auto;overflow:visible}
+
+/* orb + enter */
+.center{position:absolute;inset:0}
+.orb{
+  position:absolute;left:50%;top:46%;width:var(--orb);height:var(--orb);
+  transform:translate(calc(-50% + var(--mx,0px)),calc(-50% + var(--my,0px)));
+  border-radius:50%;
+  background:radial-gradient(circle,
+    rgba(40,40,40,.95) 0 20%,rgba(105,105,105,.92) 42%,rgba(145,145,145,.88) 55%,
+    rgba(100,100,100,.55) 67%,rgba(0,0,0,0) 74%);
+  filter:blur(calc(var(--u)*12));
+  opacity:calc(.5 + .5 * var(--p));
+}
+.orb::before{                                    /* the slow swirl inside the ring */
+  content:"";position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(255,255,255,0),rgba(255,255,255,.34),rgba(0,0,0,.42),rgba(255,255,255,0) 40%,rgba(255,255,255,.28),rgba(0,0,0,.45),rgba(255,255,255,0));
+  -webkit-mask:radial-gradient(circle,transparent 16%,#000 38%,#000 62%,transparent 74%);
+          mask:radial-gradient(circle,transparent 16%,#000 38%,#000 62%,transparent 74%);
+}
+
+.enter{
+  position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+  height:calc(var(--u)*46);padding:0 calc(var(--u)*25) 0 calc(var(--u)*26);display:flex;align-items:center;gap:calc(var(--u)*9);white-space:nowrap;
+  border:1px solid rgba(255,255,255,.22);border-radius:999px;
+  background:rgba(58,58,58,.72);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 calc(var(--u)*6) calc(var(--u)*24) rgba(0,0,0,.25);
+  -webkit-backdrop-filter:blur(calc(var(--u)*8));backdrop-filter:blur(calc(var(--u)*8));
+  transition:opacity .6s ease,background .2s,border-color .2s;
+}
+.enter:hover:not(:disabled){background:rgba(78,78,78,.78);border-color:rgba(255,255,255,.36)}
+.enter:disabled{opacity:.42;cursor:default}
+.enter:focus-visible{outline:1px solid #fff;outline-offset:calc(var(--u)*6)}
+.enter-big{font:400 calc(var(--u)*31)/1 var(--display);letter-spacing:.02em;color:#f6f6f6;margin-top:calc(var(--u)*-1)}
+.enter-small{font:400 calc(var(--u)*10)/1 var(--mono);letter-spacing:.08em;color:#c9c9c9;margin-top:1px}
+
+/* footer */
+.foot{
+  position:absolute;left:calc(var(--u)*28);right:calc(var(--u)*28);bottom:calc(var(--u)*17);
+  display:flex;justify-content:space-between;align-items:flex-end;gap:calc(var(--u)*16);flex-wrap:wrap;
+}
+.foot-text{font:400 calc(var(--u)*11.5)/calc(var(--u)*14) var(--mono);letter-spacing:.02em;color:#e2e2e2;white-space:nowrap}
+.tier-btns{display:flex;gap:calc(var(--u)*6);margin-top:calc(var(--u)*8)}
+.tier-btns button{
+  height:calc(var(--u)*22);padding:0 calc(var(--u)*12);border-radius:calc(var(--u)*11);
+  font:400 calc(var(--u)*10)/1 var(--mono);letter-spacing:.1em;
+  color:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);
+  transition:color .2s,background .2s,border-color .2s;
+}
+.tier-btns button:hover{color:rgba(255,255,255,.6)}
+.tier-btns button[aria-checked="true"]{color:#e8e8e8;background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.28)}
+.tier-btns button:focus-visible{outline:1px solid #fff;outline-offset:calc(var(--u)*2)}
+.status{text-align:right;margin-left:auto}
+.loaded{font:400 calc(var(--u)*13)/calc(var(--u)*16) var(--mono);letter-spacing:.04em;color:#e2e2e2;margin-top:calc(var(--u)*6)}
+.foot{padding-bottom:0}
+.foot > *{margin-bottom:calc(var(--u)*5)}
+
+/* ---- performance tiers ---- */
+@keyframes swirl{to{transform:rotate(360deg)}}
+@keyframes breathe{0%,100%{scale:1}50%{scale:1.045}}
+
+body[data-tier="med"]  .orb::before{animation:swirl 38s linear infinite}
+body[data-tier="high"] .orb::before{animation:swirl 16s linear infinite}
+body[data-tier="high"] .orb{animation:breathe 5s ease-in-out infinite}
+
+/* saver: nothing moves, no expensive blur behind the button */
+body[data-tier="saver"] .enter{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(58,58,58,.9)}
+body[data-tier="saver"] .orb{filter:blur(calc(var(--u)*9))}
+
+@media (prefers-reduced-motion:reduce){
+  body .orb,body .orb::before{animation:none !important}
+  body{transition:none}
+}
