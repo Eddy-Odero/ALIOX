@@ -1,0 +1,47 @@
+/* ALIOX's terminal on the right side of the home page.
+   The developer stats are erased when the robot is clicked, then ALIOX types here. */
+.tty{position:absolute;left:1012px;top:96px;width:436px;height:512px;z-index:3}
+.tty-out{
+  position:absolute;left:0;top:0;right:0;bottom:62px;overflow:hidden;white-space:pre;
+  font:400 13px/21px var(--mono,"Roboto Mono",monospace);color:#e6e6e6;
+}
+.tty-out a{color:#fff;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
+.tty-out a:hover{text-decoration-color:#fff}
+.t-cmd{color:rgba(255,255,255,.45)}
+.t-status{color:rgba(255,255,255,.4)}
+
+/* blinking block cursor (also used while the stats are erased) */
+.cur{display:inline-block;width:.58em;height:1.1em;margin-left:1px;background:#ececec;vertical-align:-.2em;animation:curBlink 1s steps(1) infinite}
+.cur[hidden]{display:none}
+.cur.typing{animation:none}
+@keyframes curBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* text flying off to the right: each line slides out in turn and is gone at the edge of the page */
+.fly-layer{position:absolute;left:0;top:0;right:0;pointer-events:none}
+.fly-line{min-height:21px;white-space:pre}
+.fly-line,.stats .fly{
+  transition:transform .75s cubic-bezier(.55,.05,.9,.45) var(--d,0s),opacity .3s linear calc(var(--d,0s) + .45s),filter .75s linear var(--d,0s);
+  will-change:transform;
+}
+.fly-line.fly-go{transform:translateX(560px);opacity:0;filter:blur(2px)}
+.stats .fly.fly-go{transform:translateX(620px);opacity:0;filter:blur(2px)}
+
+/* the stats that get removed */
+.stats .gone,.stats.gone{display:none}
+.stats .fill{transition:width .9s ease}
+
+/* [ About ] [ Projects ] [ Contacts ] [ Skills ] */
+.tty-btns{position:absolute;left:0;right:0;bottom:0;display:flex;flex-wrap:wrap;gap:6px 8px}
+.tb{
+  font:500 12.5px/1 var(--mono,"Roboto Mono",monospace);letter-spacing:.04em;white-space:pre;
+  color:rgba(255,255,255,.62);padding:9px 6px;border-radius:4px;cursor:pointer;
+  opacity:0;transform:translateY(5px);
+  transition:opacity .35s ease,transform .35s ease,color .15s,background .15s;
+}
+.tb:not(.in){visibility:hidden}
+.tb.in{opacity:1;transform:none}
+.tb.in:hover:not(:disabled){color:#fff;background:rgba(255,255,255,.09)}
+.tb.on{color:#fff;background:rgba(255,255,255,.13)}
+.tb.in:disabled{opacity:.38;cursor:default}
+.tb.on:disabled{opacity:.9}
+.tb:focus-visible{outline:1px solid #fff;outline-offset:2px}
