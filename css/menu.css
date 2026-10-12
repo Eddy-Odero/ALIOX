@@ -1,0 +1,77 @@
+/* The menu that springs up from the HOME dock (logic in menu.js). */
+.dock{cursor:pointer}
+.dock-btn{cursor:pointer}
+.dock:focus-visible{outline:1px solid #fff;outline-offset:3px}
+.dock.open{border-color:rgba(255,255,255,.3)}
+
+.menu{
+  position:absolute;z-index:20;box-sizing:border-box;padding:20px 20px 18px;
+  border:1px solid rgba(255,255,255,.16);border-radius:14px;
+  background:#0b0b0b;
+  box-shadow:0 18px 50px rgba(0,0,0,.55);
+  font-family:var(--mono,"Roboto Mono",monospace);color:#eee;
+  transform-origin:100% 100%;visibility:hidden;pointer-events:none;opacity:0;
+}
+.menu.open{visibility:visible;pointer-events:auto;opacity:1;animation:menuUp .62s both}
+.menu.closing{visibility:visible;pointer-events:none;animation:menuDown .2s ease-in both}
+
+/* springs up from the dock: overshoots, dips back, settles */
+@keyframes menuUp{
+  0%  {opacity:0;transform:translateY(46px) scale(.84)}
+  45% {opacity:1;transform:translateY(-12px) scale(1.025)}
+  65% {transform:translateY(4px) scale(.994)}
+  82% {transform:translateY(-2px) scale(1.003)}
+  100%{opacity:1;transform:none}
+}
+@keyframes menuDown{
+  0%  {opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(30px) scale(.9)}
+}
+
+.menu-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+.menu-title{font:600 19px/1.1 var(--plex,var(--mono));margin:0;color:#fff}
+.menu-sub{display:block;margin-top:7px;font:400 9.5px/1 var(--mono);letter-spacing:.18em;color:rgba(255,255,255,.34)}
+.menu-close{
+  width:38px;height:34px;border-radius:7px;border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);
+  font:500 9.5px/1 var(--mono);letter-spacing:.12em;cursor:pointer;transition:color .15s,background .15s;
+}
+.menu-close:hover{color:#fff;background:rgba(255,255,255,.1)}
+
+.menu-socials{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.menu-social{
+  display:flex;align-items:center;gap:7px;padding:11px 9px;border-radius:7px;text-decoration:none;
+  border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);
+  font:500 11.5px/1 var(--mono);color:rgba(255,255,255,.8);transition:background .15s,color .15s,border-color .15s;
+}
+.menu-social::before{content:"";width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.4)}
+.menu-social:hover{background:rgba(255,255,255,.09);color:#fff;border-color:rgba(255,255,255,.2)}
+
+.menu-nav{display:flex;flex-direction:column;gap:6px}
+.menu-item{
+  display:flex;align-items:center;gap:16px;height:54px;padding:0 18px;border-radius:9px;cursor:pointer;
+  border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.035);color:#fff;text-align:left;
+  font:600 17px/1 var(--plex,var(--mono));letter-spacing:.1em;text-transform:uppercase;
+  transition:background .15s,border-color .15s;
+}
+.menu-item i{font:400 11px/1 var(--mono);font-style:normal;letter-spacing:0;color:rgba(255,255,255,.3)}
+.menu-item::after{content:"";margin-left:auto;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .15s,box-shadow .15s}
+.menu-item:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2)}
+.menu-item:hover::after{background:#fff;box-shadow:0 0 8px rgba(255,255,255,.7)}
+.menu-item:focus-visible,.menu-social:focus-visible,.menu-close:focus-visible{outline:1px solid #fff;outline-offset:2px}
+
+/* the rows rise in one after another */
+.menu.open .menu-head,.menu.open .menu-socials,.menu.open .menu-item{animation:menuRow .42s cubic-bezier(.2,.8,.3,1) both;animation-delay:calc(.12s + var(--i,0) * .045s)}
+@keyframes menuRow{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:none}}
+
+/* the white button at the bottom right (same place as the dock button) closes the menu; HOME row leaves room for it */
+.menu-nav .menu-item:last-child{margin-right:52px}
+.menu-nav .menu-item:last-child::after{display:none}
+.menu-grid{
+  position:absolute;right:8px;bottom:9px;width:44px;height:44px;border-radius:8px;border:0;cursor:pointer;
+  display:grid;grid-template-columns:repeat(2,4px);grid-auto-rows:4px;gap:5px;place-content:center;
+  background:#efefef;transition:transform .15s,background .15s;
+}
+.menu-grid i{border-radius:50%;background:#0a0a0a}
+.menu-grid:hover{background:#fff;transform:scale(1.04)}
+.menu-grid:active{transform:scale(.97)}
