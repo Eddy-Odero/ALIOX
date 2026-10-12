@@ -21,8 +21,8 @@
     return;
   }
   if (!C) {                                              // never fail silently
-    console.error('chat: chat-content.js did not load. It must sit next to home.html and be listed before chat.js.');
-    C = { columns: 54, intro: ['The content file did not load. Check that chat-content.js is next to home.html.'], menuPrompt: [''], topics: [] };
+    console.error('chat: chat-content.js did not load. It must be js/chat-content.js and be listed before js/chat.js in home.html.');
+    C = { columns: 54, intro: ['The content file did not load. Check that js/chat-content.js exists.'], menuPrompt: [''], topics: [] };
   }
   var COLS = C.columns || 54;
 
@@ -333,8 +333,5 @@
   };
 
   robot.onClick(start);
-  if (dockBtn) dockBtn.addEventListener('click', function () {
-    if (!robot.isReady() || busy) return;
-    if (!started) start(); else askAgain();
-  });
+  // The dock button no longer writes anything: the whole dock opens the menu (menu.js).
 })();

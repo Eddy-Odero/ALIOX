@@ -1,6 +1,6 @@
 /* The menu that springs up when the HOME dock is clicked.
-   No backend: the links below are plain links, and About / Projects / Contacts / Skills ask ALIOX (chat.js) to
-   open that topic, exactly as if the visitor had clicked its button. HOME closes the menu.
+   No backend: the links below are plain links. About / Contact / Skills ask ALIOX (chat.js) to open that topic,
+   exactly as if the visitor had clicked its button. Projects and Skills open their own full-page views (projects.js, skills.js). HOME closes the menu.
 
    Put your real addresses in LINKS. Add or remove a line to change the socials. */
 (function () {
@@ -14,8 +14,8 @@
   // top to bottom. "topic" matches an id in chat-content.js. The number is shown in front of the name.
   var PAGES = [
     { label: 'Contact',  topic: 'contacts' },
-    { label: 'Skills',   topic: 'skills' },
-    { label: 'Projects', topic: 'projects' },
+    { label: 'Skills',   view: 'skills' },        // opens the skills view (skills.js), ALIOX does not write anything
+    { label: 'Projects', view: 'projects' },     // opens the project index (projects.js), ALIOX does not write anything
     { label: 'About',    topic: 'about' },
     { label: 'Home',     topic: null }
   ];
@@ -57,6 +57,8 @@
     b.appendChild(document.createTextNode(p.label));
     b.addEventListener('click', function () {
       close();
+      if (p.view) { showView(p.view); return; }
+      showView(null);                                                    // leaving the index or skills for another section
       if (p.topic && window.aliox) window.aliox.open(p.topic);
     });
     nav.appendChild(b);
@@ -68,6 +70,15 @@
   host.appendChild(menu);
 
   // sits right on top of the dock, same width, growing upward (layout units, so the page scaling does not matter)
+  // Projects and Skills are full-page views: opening one closes the other, and null closes both
+  function showView(name) {
+    var views = { projects: window.projectsView, skills: window.skillsView };
+    Object.keys(views).forEach(function (k) {
+      if (!views[k]) return;
+      if (k === name) views[k].open(); else views[k].close();
+    });
+  }
+
   function place() {
     menu.style.left = dock.offsetLeft + 'px';
     menu.style.width = dock.offsetWidth + 'px';
