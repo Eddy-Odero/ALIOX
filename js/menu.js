@@ -13,7 +13,7 @@
   ];
   // top to bottom. "topic" matches an id in chat-content.js. The number is shown in front of the name.
   var PAGES = [
-    { label: 'Contact',  topic: 'contacts' },
+    { label: 'Contact',  view: 'contact' },         // opens the contact trail (contact.js), ALIOX does not write anything
     { label: 'Skills',   view: 'skills' },        // opens the skills view (skills.js), ALIOX does not write anything
     { label: 'Projects', view: 'projects' },     // opens the project index (projects.js), ALIOX does not write anything
     { label: 'About',    topic: 'about' },
@@ -58,7 +58,7 @@
     b.addEventListener('click', function () {
       close();
       if (p.view) { showView(p.view); return; }
-      showView(null);                                                    // leaving the index or skills for another section
+      showView(null);                                                    // leaving a full-page view for another section
       if (p.topic && window.aliox) window.aliox.open(p.topic);
     });
     nav.appendChild(b);
@@ -70,9 +70,9 @@
   host.appendChild(menu);
 
   // sits right on top of the dock, same width, growing upward (layout units, so the page scaling does not matter)
-  // Projects and Skills are full-page views: opening one closes the other, and null closes both
+  // Projects, Skills and Contact are full-page views: opening one closes the other, and null closes both
   function showView(name) {
-    var views = { projects: window.projectsView, skills: window.skillsView };
+    var views = { projects: window.projectsView, skills: window.skillsView, contact: window.contactView };
     Object.keys(views).forEach(function (k) {
       if (!views[k]) return;
       if (k === name) views[k].open(); else views[k].close();
