@@ -75,12 +75,12 @@
     b.style.setProperty('--dur', rand(5.5, 9).toFixed(1) + 's'); b.style.setProperty('--dl', (-rand(0, 6)).toFixed(1) + 's');
     b.style.setProperty('--fx', rand(-4, 4).toFixed(1) + 'px'); b.style.setProperty('--fy', rand(-5, 5).toFixed(1) + 'px');
     b.appendChild(document.createTextNode(c.name));
-    b.appendChild(el('small', null, pad(c.items.length)));
+    b.appendChild(el('small', null, pad(k + 1)));
     b.addEventListener('click', function () { select(k); });
     orb.appendChild(b); bubbles.push(b);
   });
 
-  // ---- the number counts up through random digits before it settles ----
+  // ---- the big number flickers through random digits before it settles on the category number ----
   async function scramble(target, token) {
     var end = pad(target);
     for (var i = 0; i < 9; i++) {
@@ -105,10 +105,10 @@
     spin += 360; arcs.style.transform = 'rotate(' + (spin + ang) + 'deg)';
     thumb.style.height = (100 / bubbles.length) + '%'; thumb.style.top = (k * 100 / bubbles.length) + '%';
 
-    cap.textContent = c.items.length + ' ' + (c.items.length === 1 ? 'TECHNOLOGY' : 'TECHNOLOGIES') + ' IN ' + c.name;
+    cap.textContent = 'CATEGORY ' + pad(k + 1) + ' OF ' + pad(bubbles.length) + '  -  ' + c.items.length + ' ' + (c.items.length === 1 ? 'TECHNOLOGY' : 'TECHNOLOGIES');
     about.textContent = c.about || '';
     list.textContent = ''; prompt.textContent = ''; cmd.textContent = '';
-    scramble(c.items.length, token);
+    scramble(k + 1, token);                                            // the big number is the category's number, from 01
 
     // the command is typed, then each line of the list is written
     var text = '> ls ./' + slug(c.name), node = document.createTextNode('');
