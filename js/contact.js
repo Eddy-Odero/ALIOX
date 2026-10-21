@@ -37,60 +37,104 @@
     return typeof url === 'string' && prefixes.some(function (p) { return url.indexOf(p) === 0; }) ? url : null;
   }
 
-  // ---- layout (stage units): groups on the left, the panel on the right ----
-  var CELL_W = 118, CELL_H = 100, GAP = 8, PAD = 14, HEAD = 44, GX = 72;
-  var GROUP_H = HEAD + CELL_H + PAD, GROUP_Y0 = 110, GROUP_GAP = 48;
+  // ---- the scene: tilted rings around a particle core, one channel sitting on a ring each ----
+  var STAGE_W = 1475, STAGE_H = 720, CX = 470, CY = 372, TILT = 0.6;
+  var RADII = [92, 160, 228, 296, 364];
+  var calm = /[?&]calm\b/.test(location.search);
+  var tier = 'med';
+  try { var sv = localStorage.getItem('tier'); if (/^(high|med|saver)$/.test(sv)) tier = sv; } catch (e) {}
 
   var view = el('section', 'cv'); view.setAttribute('role', 'dialog'); view.setAttribute('aria-label', 'Contact'); view.setAttribute('aria-hidden', 'true');
   var label = el('div', 'cv-label', 'SELECTED - CONTACT'); label.appendChild(el('i'));
   var close = el('button', 'cv-close'); close.type = 'button';
   close.appendChild(el('span', null, 'ESC')); close.appendChild(document.createTextNode('CLOSE'));
   view.appendChild(label); view.appendChild(close);
-  view.appendChild(el('div', 'cv-dots'));
-  view.appendChild(el('div', 'cv-hint', 'SELECT A CHANNEL'));
+  var canvas = el('canvas', 'cv-canvas'); canvas.setAttribute('aria-hidden', 'true'); view.appendChild(canvas);
+  view.appendChild(el('div', 'cv-title2', 'CONTACT'));
+  view.appendChild(el('div', 'cv-hint', 'EACH RING IS A WAY IN. CHOOSE ONE, OR USE THE ARROW KEYS'));
 
-  var wires = svg('svg', { 'class': 'cv-wires', viewBox: '0 0 1475 720', 'aria-hidden': 'true' });
-  view.appendChild(wires);
-
-  var order = [], cells = {}, geo = [], idx = 0;
-  GROUPS.forEach(function (g, gi) {
-    var ids = (g.ids || []).filter(function (id) { return CH[id]; });
-    var w = ids.length * CELL_W + (ids.length - 1) * GAP + PAD * 2;
-    var y = GROUP_Y0 + gi * (GROUP_H + GROUP_GAP);
-    var box = el('div', 'cv-grp'); box.style.cssText = 'left:' + GX + 'px;top:' + y + 'px;width:' + w + 'px;height:' + GROUP_H + 'px';
-    box.style.setProperty('--i', gi * 3);
-    box.appendChild(el('h3', null, g.title));
-    view.appendChild(box);
-    geo.push({ x: GX, y: y, w: w, midY: y + GROUP_H / 2 });
-    ids.forEach(function (id, k) {
-      var c = CH[id];
-      var b = el('button', 'cv-cell'); b.type = 'button'; b.setAttribute('aria-label', c.label);
-      b.style.cssText = 'left:' + (GX + PAD + k * (CELL_W + GAP)) + 'px;top:' + (y + HEAD) + 'px';
-      b.style.setProperty('--i', gi * 3 + k + 1);
-      var ic = el('span', 'cv-ico'); ic.appendChild(icon(id));
-      b.appendChild(ic); b.appendChild(el('span', 'cv-nm', c.label)); b.appendChild(el('span', 'cv-sb', c.sub || ''));
-      (function (n) { b.addEventListener('click', function () { select(n); }); })(idx);
-      view.appendChild(b); cells[id] = b; order.push(id); idx++;
+  var order = [], cells = {}, nodes = [];
+  GROUPS.forEach(function (g) {
+    (g.ids || []).filter(function (id) { return CH[id]; }).forEach(function (id) {
+      var i = order.length, c = CH[id];
+      var b = el('button', 'cv-node', c.label); b.type = 'button'; b.setAttribute('aria-label', c.label);
+      (function (n) { b.addEventListener('click', function () { select(n); }); })(i);
+      view.appendChild(b); cells[id] = b; order.push(id);
+      var ring = [1, 2, 3, 4, 2, 3, 4][i % 7];   // fixed spots, chosen so no two boxes meet; only the light moves round the rings
+      nodes.push({ id: id, el: b, ring: ring, ang: [-2.5, -0.5, 0.9, 2.4, 2.2, -1.4, -2.8][i] != null ? [-2.5, -0.5, 0.9, 2.4, 2.2, -1.4, -2.8][i] : i * 2.05, x: 0, y: 0 });
     });
   });
+  var ctx = canvas.getContext('2d'), pr = 1, W2 = STAGE_W, H2 = STAGE_H;
+  var core = [], seed0 = 5;
+  function rnd() { seed0 = (seed0 * 1664525 + 1013904223) >>> 0; return seed0 / 4294967296; }
+  for (var q = 0; q < (tier === 'saver' ? 420 : 900); q++) { var a1 = rnd() * 6.2832, b1 = Math.acos(2 * rnd() - 1); core.push([Math.sin(b1) * Math.cos(a1), Math.cos(b1), Math.sin(b1) * Math.sin(a1)]); }
+  var dust = []; for (q = 0; q < 140; q++) dust.push([rnd() * STAGE_W, rnd() * STAGE_H, 0.1 + rnd() * 0.45]);
+  var hovering = false, raf = 0, last = 0, t0 = 0, spinT = 0, pulse = 0;
+  var SPEED = [0.14, 0.11, 0.085, 0.065, 0.05];
 
-  // the trail: in from the top at the left, through each group, winding down; ends on a plus
-  function wire(d) { wires.appendChild(svg('path', { 'class': 'wire', d: d })); }
-  if (geo.length) {
-    var L = 48, g0 = geo[0];
-    wire('M' + L + ' 84 V' + (g0.midY - 12) + ' Q' + L + ' ' + g0.midY + ' ' + (L + 12) + ' ' + g0.midY + ' H' + g0.x);
-    for (var i = 0; i < geo.length - 1; i++) {
-      var a = geo[i], b2 = geo[i + 1], rx = a.x + a.w + 30, my = (a.y + GROUP_H + b2.y) / 2;
-      wire('M' + (a.x + a.w) + ' ' + a.midY + ' H' + (rx - 12) + ' Q' + rx + ' ' + a.midY + ' ' + rx + ' ' + (a.midY + 12) +
-           ' V' + (my - 12) + ' Q' + rx + ' ' + my + ' ' + (rx - 12) + ' ' + my +
-           ' H' + (L + 12) + ' Q' + L + ' ' + my + ' ' + L + ' ' + (my + 12) +
-           ' V' + (b2.midY - 12) + ' Q' + L + ' ' + b2.midY + ' ' + (L + 12) + ' ' + b2.midY + ' H' + b2.x);
-    }
-    var lg = geo[geo.length - 1], ex = lg.x + lg.w;
-    wire('M' + ex + ' ' + lg.midY + ' H' + (ex + 32));
-    wires.appendChild(svg('circle', { 'class': 'plus', cx: ex + 44, cy: lg.midY, r: 11 }));
-    wires.appendChild(svg('path', { 'class': 'plus', d: 'M' + (ex + 39) + ' ' + lg.midY + ' H' + (ex + 49) + ' M' + (ex + 44) + ' ' + (lg.midY - 5) + ' V' + (lg.midY + 5) }));
+  function sizeCanvas() {
+    var r = view.getBoundingClientRect(), s = r.width / STAGE_W || 1;
+    pr = Math.min(Math.max(s * (window.devicePixelRatio || 1), 1), tier === 'high' ? 2 : 1.5);
+    canvas.width = Math.round(STAGE_W * pr); canvas.height = Math.round(STAGE_H * pr);
   }
+  function ell(R, a) { return [CX + Math.cos(a) * R, CY + Math.sin(a) * R * TILT]; }
+
+  function draw(dt) {
+    var t = spinT;
+    ctx.setTransform(pr, 0, 0, pr, 0, 0); ctx.clearRect(0, 0, STAGE_W, STAGE_H);
+    var sel = current >= 0 ? nodes[current] : null;
+    // dust
+    for (var i = 0; i < dust.length; i++) { var d = dust[i]; ctx.fillStyle = 'rgba(255,255,255,' + (d[2] * (0.6 + 0.4 * Math.sin(t * 0.6 + i))) + ')'; ctx.fillRect(d[0], d[1], 1.4, 1.4); }
+    // rings
+    ctx.lineWidth = 1;
+    RADII.forEach(function (R, k) {
+      ctx.beginPath(); ctx.ellipse(CX, CY, R, R * TILT, 0, 0, 6.2832);
+      var on = sel && sel.ring === k;
+      ctx.strokeStyle = 'rgba(255,255,255,' + (on ? 0.7 : 0.38 - k * 0.05) + ')';
+      ctx.setLineDash(k % 2 ? [2, 6] : []); ctx.stroke(); ctx.setLineDash([]);
+    });
+    // a bright arc travelling round the chosen ring, and a quieter one on each of the others
+    RADII.forEach(function (R, k) {
+      var on = sel && sel.ring === k, a0 = t * SPEED[k] * 2.2 + k * 1.7, len = on ? 1.5 : 0.7;
+      ctx.beginPath(); for (var a = a0; a < a0 + len; a += 0.04) { var p = ell(R, a); a === a0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+      ctx.strokeStyle = 'rgba(255,255,255,' + (on ? 1 : 0.55) + ')'; ctx.lineWidth = on ? 2.6 : 1.8; ctx.stroke();
+    });
+    ctx.lineWidth = 1;
+    // lines from the core to every channel; the chosen one is bright
+    nodes.forEach(function (n, k) {
+      var on = sel === n;
+      ctx.beginPath(); ctx.moveTo(CX, CY); ctx.lineTo(n.x, n.y);
+      ctx.strokeStyle = 'rgba(255,255,255,' + (on ? 0.9 : 0.18) + ')'; ctx.lineWidth = on ? 1.6 : 1; ctx.stroke();
+      if (on) { var f = (t * 0.7) % 1; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(CX + (n.x - CX) * f, CY + (n.y - CY) * f, 3, 0, 6.2832); ctx.fill(); }
+    });
+    ctx.lineWidth = 1;
+    // core: a turning ball of points
+    var ca = Math.cos(t * 0.35), sa = Math.sin(t * 0.35);
+    for (i = 0; i < core.length; i++) {
+      var c3 = core[i], x = c3[0] * ca + c3[2] * sa, z = -c3[0] * sa + c3[2] * ca, s = 1 / (1 - z * 0.25);
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.18 + 0.7 * (z + 1) / 2) + ')'; ctx.fillRect(CX + x * 52 * s, CY + c3[1] * 52 * s, 1.7, 1.7);
+    }
+    ctx.beginPath(); ctx.arc(CX, CY, 58, 0, 6.2832); ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(CX, CY, 58 + 8 + ((t * 14) % 22), 0, 6.2832); ctx.strokeStyle = 'rgba(255,255,255,' + (0.35 * (1 - ((t * 14) % 22) / 22)) + ')'; ctx.stroke();
+    ctx.font = '700 11px "Roboto Mono",monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.fillText('YOU', CX, CY + 4);
+  }
+  function place() {
+    nodes.forEach(function (n) {
+      var p = ell(RADII[n.ring], n.ang); n.x = p[0]; n.y = p[1];
+      var depth = (Math.sin(n.ang) + 1) / 2;                       // nearer (lower on the screen) nodes sit a touch larger
+      n.el.style.transform = 'translate(' + (n.x - 46).toFixed(1) + 'px,' + (n.y - 16).toFixed(1) + 'px) scale(' + (0.92 + 0.14 * depth).toFixed(3) + ')';
+    });
+  }
+  function frame(now) {
+    raf = requestAnimationFrame(frame);
+    if (now - last < (tier === 'saver' ? 33 : 15)) return;
+    var dt = Math.min((now - last) / 1000, 0.1); last = now;
+    if (!calm) spinT += dt;
+    place(); draw(dt);
+  }
+  view.addEventListener('pointerover', function (e) { hovering = !!(e.target.closest && e.target.closest('.cv-node, .cv-panel')); });
+  view.addEventListener('pointerout', function (e) { if (!e.relatedTarget || !(e.relatedTarget.closest && e.relatedTarget.closest('.cv-node, .cv-panel'))) hovering = false; });
+  window.addEventListener('resize', function () { if (isOpen) sizeCanvas(); });
 
   // the panel
   var panel = el('div', 'cv-panel');
@@ -103,6 +147,7 @@
   host.appendChild(view);
 
   var current = -1, isOpen = false, token = 0;
+  // (current, isOpen are used by the scene above only after they exist)
 
   // ---- helpers ----
   function copy(text) {
@@ -263,12 +308,13 @@
     if (isOpen) return;
     isOpen = true;
     view.classList.add('open'); view.setAttribute('aria-hidden', 'false');
+    sizeCanvas(); hovering = false; last = 0; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
     select(0);                                                         // always starts on the first channel
     setTimeout(function () { if (isOpen && cells[order[0]]) cells[order[0]].focus({ preventScroll: true }); }, 450);
   }
   function shut() {
     if (!isOpen) return;
-    isOpen = false; token++; view.classList.remove('open'); view.setAttribute('aria-hidden', 'true');
+    isOpen = false; token++; cancelAnimationFrame(raf); view.classList.remove('open'); view.setAttribute('aria-hidden', 'true');
   }
 
   close.addEventListener('click', shut);

@@ -1,63 +1,64 @@
-/* The project index: a full-page view with the selected project on the left and the list on the right
-   (logic in projects.js, content in projects-data.js). */
+/* The project index: a helix of project windows (logic in projects.js, content in projects-data.js). Black and white. */
 .dock,.wave{z-index:16}
 
 .pv{
-  position:absolute;inset:0;z-index:15;background:#0b0b0b;color:#fff;
+  position:absolute;inset:0;z-index:15;color:#fff;overflow:hidden;
   font-family:var(--mono,"Roboto Mono",monospace);text-transform:uppercase;
+  background:
+    linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px) 0 0/40px 40px,
+    linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px) 0 0/40px 40px,
+    radial-gradient(ellipse at 50% 50%,#0f1316,#030405 78%),#050607;
   visibility:hidden;opacity:0;pointer-events:none;transition:opacity .35s ease,visibility 0s linear .35s;
 }
 .pv.open{visibility:visible;opacity:1;pointer-events:auto;transition:opacity .35s ease}
 
-.pv-label{position:absolute;left:48px;top:40px;font:500 11.5px/14px var(--mono);letter-spacing:.06em}
+.pv-label{position:absolute;left:48px;top:40px;font:500 11.5px/14px var(--mono);letter-spacing:.06em;z-index:3}
 .pv-label i{display:inline-block;width:7px;height:7px;margin-left:7px;background:#fff}
-.pv-close{
-  position:absolute;right:48px;top:34px;padding:6px 0 6px 10px;cursor:pointer;
-  font:500 11px/14px var(--mono);letter-spacing:.08em;color:rgba(255,255,255,.55);transition:color .15s;
-}
+.pv-close{position:absolute;right:48px;top:34px;z-index:3;padding:6px 0 6px 10px;cursor:pointer;background:none;border:0;font:500 11px/14px var(--mono);letter-spacing:.08em;color:rgba(255,255,255,.55);transition:color .15s}
 .pv-close:hover{color:#fff}
 .pv-close span{color:rgba(255,255,255,.35);margin-right:8px}
 
-.pv-desc{position:absolute;left:48px;top:84px;width:540px;font:400 11.5px/15px var(--mono);letter-spacing:.05em;min-height:90px}
-.pv-mark{position:absolute;left:288px;top:178px;width:11px;height:11px;background:#f2f2f2}
+.pv-rails{position:absolute;left:0;top:0;width:1475px;height:720px;pointer-events:none}
 
-.pv-shot{position:absolute;left:48px;top:208px;width:480px;height:320px;overflow:hidden;background:#141414}
-.pv-shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.pv-ph{
-  position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;
-  font:600 24px/1.2 var(--plex,var(--mono));letter-spacing:.14em;color:rgba(255,255,255,.82);
-  background:
-    linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px) 0 0/20px 20px,
-    linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px) 0 0/20px 20px,#121212;
+/* the 3D stage: perspective here, the helix inside keeps its children in 3D (no opacity, filter or overflow on its ancestors' way) */
+.pv-stage{position:absolute;inset:0;perspective:1000px;perspective-origin:737px 352px;cursor:grab;touch-action:pan-y}
+.pv-stage:active{cursor:grabbing}
+.pv-helix{position:absolute;left:0;top:0;width:0;height:0;transform-style:preserve-3d}
+
+.pv-card{
+  position:absolute;left:-125px;top:-86px;width:250px;height:172px;cursor:pointer;
+  background:rgba(0,0,0,.82);border:1.5px solid rgba(255,255,255,.85);outline:0;user-select:none;-webkit-user-select:none;
 }
-.pv-ph small{display:block;margin-top:12px;font:400 10px/1 var(--mono);letter-spacing:.2em;color:rgba(255,255,255,.35)}
+.pv-card.on{border-color:#fff;box-shadow:0 0 22px rgba(255,255,255,.22)}
+.pv-card:focus-visible{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.6)}
+.pv-card.ghost{cursor:default;border-style:dashed;border-color:rgba(255,255,255,.45)}
+.pv-card .bar{height:16px;border-bottom:1.5px solid rgba(255,255,255,.7);display:flex;align-items:center;gap:4px;padding:0 6px}
+.pv-card .bar i{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.85)}
+.pv-card .bar span{margin-left:auto;font:400 7px/1 var(--mono);letter-spacing:.1em;color:rgba(255,255,255,.6)}
+.pv-card .body{position:absolute;left:10px;right:10px;top:25px;bottom:34px;overflow:hidden}
+.pv-card .hero{position:absolute;left:0;right:0;top:0;height:62%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3)}
+.pv-card .tiles{position:absolute;left:0;right:0;bottom:0;height:30%;display:flex;gap:3px}
+.pv-card .tiles b{flex:1;background:rgba(255,255,255,.14)}
+.pv-card .tiles b:nth-child(2){background:rgba(255,255,255,.3)}
+.pv-card .body img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.08);background:#111}
+.pv-card .body.has .hero,.pv-card .body.has .tiles{visibility:hidden}
+.pv-card .ttl{position:absolute;left:10px;right:10px;bottom:8px;font:700 13px/1 var(--mono);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-card.ghost .ttl{font-weight:400;color:rgba(255,255,255,.6)}
 
-.pv-meta{position:absolute;left:48px;top:556px;width:480px}
-.pv-row{display:flex;justify-content:space-between;font:400 11.5px/16px var(--mono);letter-spacing:.05em}
-.pv-row span:last-child{color:rgba(255,255,255,.55);text-align:right}
-.pv-links{position:absolute;left:48px;top:622px;display:flex;gap:22px}
+/* the right side: the chosen project */
+.pv-side{position:absolute;left:1110px;top:104px;width:315px;z-index:3;pointer-events:none}
+.pv-side a{pointer-events:auto}
+.pv-cap{font:400 10.5px/14px var(--mono);letter-spacing:.12em;color:rgba(255,255,255,.5)}
+.pv-name{margin-top:8px;font:700 24px/1.15 var(--plex,var(--mono));letter-spacing:.02em}
+.pv-desc{margin:14px 0 0;font:400 11.5px/17px var(--mono);letter-spacing:.04em;color:rgba(255,255,255,.82);text-transform:none}
+.pv-meta{margin-top:18px;border-top:1px solid rgba(255,255,255,.18)}
+.pv-row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.1);font:400 10.5px/15px var(--mono);letter-spacing:.05em}
+.pv-row span:last-child{color:rgba(255,255,255,.6);text-align:right}
+.pv-links{margin-top:18px;display:flex;gap:22px}
 .pv-links a{font:500 11px/14px var(--mono);letter-spacing:.08em;color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:3px;transition:border-color .15s}
 .pv-links a:hover{border-bottom-color:#fff}
-
-.pv-num{position:absolute;left:758px;top:64px;font:500 96px/1 var(--plex,var(--mono));letter-spacing:-.02em;color:#fff}
-.pv-cap{position:absolute;left:760px;top:178px;font:400 12px/16px var(--mono);letter-spacing:.06em}
-.pv-list{position:absolute;left:760px;right:48px;top:224px;margin:0;padding:0;list-style:none}
-.pv-item{
-  position:relative;display:flex;align-items:center;height:48px;width:100%;padding:0;cursor:pointer;
-  border:0;border-bottom:1px solid rgba(255,255,255,.14);background:none;text-align:left;text-transform:uppercase;
-  font:400 11.5px/1 var(--mono);letter-spacing:.06em;color:rgba(255,255,255,.5);transition:color .2s;
-}
-.pv-item b{width:60px;font-weight:400}
-.pv-item::after{content:"";position:absolute;right:0;top:50%;width:7px;height:7px;margin-top:-3px;background:#fff;opacity:0;transform:scale(.4);transition:opacity .2s,transform .2s}
-.pv-item:hover{color:rgba(255,255,255,.85)}
-.pv-item.on{color:#fff}
-.pv-item.on::after{opacity:1;transform:none}
-.pv-item:focus-visible{outline:1px solid #fff;outline-offset:-1px}
-
-/* opening: the list rows slide in one after another; changing project: the picture is wiped in and the text rises */
-.pv.open .pv-item{animation:pvRow .5s cubic-bezier(.2,.8,.3,1) both;animation-delay:calc(.12s + var(--i,0) * .06s)}
-@keyframes pvRow{0%{opacity:0;transform:translateX(24px)}100%{opacity:1;transform:none}}
-.pv-shot.swap img,.pv-shot.swap .pv-ph{animation:pvWipe .6s cubic-bezier(.7,0,.2,1) both}
-@keyframes pvWipe{0%{clip-path:inset(0 0 100% 0);filter:brightness(1.8)}100%{clip-path:inset(0);filter:none}}
 .pv-rise{animation:pvRise .45s cubic-bezier(.2,.8,.3,1) both}
 @keyframes pvRise{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}
+
+.pv-big{position:absolute;left:48px;top:586px;font:700 40px/1 var(--plex,var(--mono));letter-spacing:.02em;z-index:3;pointer-events:none}
+.pv-hint{position:absolute;left:48px;top:640px;font:400 11px/14px var(--mono);letter-spacing:.12em;color:rgba(255,255,255,.5);z-index:3;pointer-events:none}
