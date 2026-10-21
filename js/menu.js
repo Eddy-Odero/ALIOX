@@ -16,7 +16,7 @@
     { label: 'Contact',  view: 'contact' },         // opens the contact trail (contact.js), ALIOX does not write anything
     { label: 'Skills',   view: 'skills' },        // opens the skills view (skills.js), ALIOX does not write anything
     { label: 'Projects', view: 'projects' },     // opens the project index (projects.js), ALIOX does not write anything
-    { label: 'About',    topic: 'about' },
+    { label: 'About',    view: 'about' },           // opens the 3D portrait (about.js), ALIOX does not write anything
     { label: 'Home',     topic: null }
   ];
 
@@ -70,9 +70,9 @@
   host.appendChild(menu);
 
   // sits right on top of the dock, same width, growing upward (layout units, so the page scaling does not matter)
-  // Projects, Skills and Contact are full-page views: opening one closes the other, and null closes both
+  // Projects, Skills, Contact and About are full-page views: opening one closes the other, and null closes both
   function showView(name) {
-    var views = { projects: window.projectsView, skills: window.skillsView, contact: window.contactView };
+    var views = { projects: window.projectsView, skills: window.skillsView, contact: window.contactView, about: window.aboutView };
     Object.keys(views).forEach(function (k) {
       if (!views[k]) return;
       if (k === name) views[k].open(); else views[k].close();
