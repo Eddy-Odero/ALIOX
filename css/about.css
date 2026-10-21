@@ -1,0 +1,37 @@
+/* The About view: the hooded 3D portrait in the middle, frames orbiting it, the chosen frame's text on the right
+   (logic in js/about.js, content in js/about-data.js, points in js/about-points.js). Black and white, terminal style. */
+.dock,.wave{z-index:16}
+
+.ab{
+  position:absolute;inset:0;z-index:15;background:radial-gradient(ellipse 45% 70% at 50% 52%,#0b1a22 0%,#050c11 60%,#04090d 100%);color:#fff;overflow:hidden;
+  font-family:var(--mono,"Roboto Mono",monospace);text-transform:uppercase;
+  visibility:hidden;opacity:0;pointer-events:none;transition:opacity .35s ease,visibility 0s linear .35s;
+}
+.ab.open{visibility:visible;opacity:1;pointer-events:auto;transition:opacity .35s ease}
+
+.ab-dots{position:absolute;left:0;top:0;right:0;height:720px;pointer-events:none;
+  background:linear-gradient(rgba(120,190,215,.10) 1px,transparent 1px) 0 0/40px 40px,linear-gradient(90deg,rgba(120,190,215,.10) 1px,transparent 1px) 0 0/40px 40px;
+  -webkit-mask:radial-gradient(ellipse 65% 75% at 50% 50%,#000 25%,transparent 100%);mask:radial-gradient(ellipse 65% 75% at 50% 50%,#000 25%,transparent 100%)}
+.ab-canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block;pointer-events:none;z-index:8}   /* above the far frames, below the near ones */
+
+.ab-label{position:absolute;left:48px;top:40px;font:500 11.5px/14px var(--mono);letter-spacing:.06em}
+.ab-label i{display:inline-block;width:7px;height:7px;margin-left:7px;background:#fff}
+.ab-close{position:absolute;right:48px;top:34px;padding:6px 0 6px 10px;cursor:pointer;font:500 11px/14px var(--mono);letter-spacing:.08em;color:rgba(255,255,255,.55);transition:color .15s;background:none;border:0}
+.ab-close:hover{color:#fff}
+.ab-close span{color:rgba(255,255,255,.35);margin-right:8px}
+
+.ab-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* text */
+.ab-name{position:absolute;left:48px;top:560px;font:500 30px/1.1 var(--plex,var(--mono));letter-spacing:.01em}
+.ab-line{position:absolute;left:48px;top:606px;width:430px;font:400 11px/17px var(--mono);letter-spacing:.03em;color:rgba(207,227,238,.55);text-transform:none}
+.ab-hint{position:absolute;left:0;right:0;top:640px;text-align:center;font:400 10px/12px var(--mono);letter-spacing:.2em;color:rgba(255,255,255,.45);pointer-events:none}
+.ab-info{position:absolute;left:1125px;top:100px;width:295px;z-index:14}
+.ab-info .cap{font:400 10px/12px var(--mono);letter-spacing:.14em;color:rgba(255,255,255,.45)}
+.ab-info b{display:block;margin-top:10px;font:600 13px/16px var(--mono);letter-spacing:.1em}
+.ab-info p{margin:10px 0 0;font:400 11.5px/18px var(--mono);letter-spacing:.02em;color:rgba(255,255,255,.62);text-transform:none}
+.ab-info.swap{animation:abSwap .4s ease both}
+@keyframes abSwap{0%{opacity:0;translate:0 8px}100%{opacity:1;translate:0 0}}
+.ab-cur{display:inline-block;width:.58em;height:1.05em;margin-left:2px;background:#ececec;vertical-align:-.18em;animation:abBlink 1s steps(1) infinite}
+@keyframes abBlink{0%,100%{opacity:1}50%{opacity:0}}
+.ab-nowebgl{position:absolute;left:0;right:0;top:330px;text-align:center;font:400 11px/16px var(--mono);letter-spacing:.1em;color:rgba(255,255,255,.5)}
