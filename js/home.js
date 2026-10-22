@@ -2,6 +2,7 @@
   // ---- settings you can change ----
   var PLACE = 'Kisumu/Nairobi';     // shown before the time
   var TIME_ZONE = 'Africa/Nairobi'; // clock follows this zone
+  var GITHUB_USER = 'Eddy-Odero';   // the PROJECTS count is this account's public repositories, so it grows by itself
 
   // ---- fit the 1475 x 720 design canvas to the window ----
   var W = 1475, H = 720;
@@ -53,4 +54,36 @@
     }
     requestAnimationFrame(step);
   });
+
+  // ---- projects: count the public repositories (not forks) on GitHub, read-only, no key ----
+  // The answer is kept for the visit in sessionStorage. If GitHub cannot be reached the number stays as "--".
+  var projEl = document.getElementById('projCount'), projFill = document.getElementById('projFill');
+  function showProjects(n) {
+    var end = Math.max(0, +n || 0), t0 = null, dur = 1400;
+    projFill.style.width = Math.min(end / 20, 1) * 100 + '%';                // the bar is full at 20 projects
+    if (reduce) { projEl.textContent = end; return; }
+    function step(now) {
+      if (t0 === null) t0 = now;
+      var t = Math.max(0, Math.min((now - t0) / dur, 1));
+      projEl.textContent = Math.round(end * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function countRepos(list) {
+    return Array.isArray(list) ? list.filter(function (r) { return r && !r.fork; }).length : null;
+  }
+  (function loadProjects() {
+    var key = 'home-github-count';
+    try { var c = sessionStorage.getItem(key); if (c !== null && c !== '') { showProjects(+c); return; } } catch (e) {}
+    var ctl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctl) ctl.abort(); }, 8000);
+    fetch('https://api.github.com/users/' + encodeURIComponent(GITHUB_USER) + '/repos?per_page=100&type=owner', ctl ? { signal: ctl.signal } : {})
+      .then(function (r) { clearTimeout(timer); if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(function (list) {
+        var n = countRepos(list); if (n === null) return;
+        try { sessionStorage.setItem(key, String(n)); } catch (e) {}
+        showProjects(n);
+      })
+      .catch(function () { /* leave "--" */ });
+  })();
 })();
