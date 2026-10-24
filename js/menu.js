@@ -1,121 +1,110 @@
-/* The menu that springs up when the HOME dock is clicked.
-   No backend: the links below are plain links. About / Contact / Skills ask ALIOX (chat.js) to open that topic,
-   exactly as if the visitor had clicked its button. Projects and Skills open their own full-page views (projects.js, skills.js). HOME closes the menu.
-
-   Put your real addresses in LINKS. Add or remove a line to change the socials. */
 (function () {
-  'use strict';
+  // ---- settings you can change ----
+  var PLACE = 'Kisumu/Nairobi';     // shown before the time
+  var TIME_ZONE = 'Africa/Nairobi'; // clock follows this zone
+  var GITHUB_USER = 'Eddy-Odero';   // the PROJECTS count is this account's public repositories, so it grows by itself
 
-  var LINKS = [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/YOUR-LINKEDIN-NAME' },
-    { label: 'Dev.to',   href: 'https://dev.to/YOUR-DEVTO-NAME' },
-    { label: 'Github',   href: 'https://github.com/Eddy-Odero' }
-  ];
-  // top to bottom. "topic" matches an id in chat-content.js. The number is shown in front of the name.
-  var PAGES = [
-    { label: 'Contact',  view: 'contact' },         // opens the contact trail (contact.js), ALIOX does not write anything
-    { label: 'Skills',   view: 'skills' },        // opens the skills view (skills.js), ALIOX does not write anything
-    { label: 'Projects', view: 'projects' },     // opens the project index (projects.js), ALIOX does not write anything
-    { label: 'About',    view: 'about' },           // opens the 3D portrait (about.js), ALIOX does not write anything
-    { label: 'Home',     topic: null }
-  ];
+  // ---- fit the 1475 x 720 design canvas to the window ----
+  var W = 1475, H = 720;
+  var stage = document.getElementById('stage');
 
-  var dock = document.querySelector('.dock');
-  if (!dock) return;
-  var host = dock.parentNode;
-  var open = false, closeTimer = 0;
-
-  function el(tag, cls, text) {
-    var e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (text != null) e.textContent = text;
-    return e;
+  function fit() {
+    var s = Math.min(window.innerWidth / W, window.innerHeight / H);
+    stage.style.transform =
+      'translate(' + (-W * s / 2) + 'px,' + (-H * s / 2) + 'px) scale(' + s + ')';
   }
+  window.addEventListener('resize', fit);
+  fit();
 
-  // ---- build the panel (text nodes only, never HTML) ----
-  var menu = el('div', 'menu'); menu.id = 'menu'; menu.setAttribute('role', 'dialog'); menu.setAttribute('aria-label', 'Menu');
-  var head = el('div', 'menu-head'); head.style.setProperty('--i', 0);
-  var titles = el('div');
-  titles.appendChild(el('h2', 'menu-title', 'Menu'));
-  titles.appendChild(el('span', 'menu-sub', 'NAVIGATION'));
-  var closeBtn = el('button', 'menu-close', 'ESC'); closeBtn.type = 'button'; closeBtn.setAttribute('aria-label', 'Close menu');
-  head.appendChild(titles); head.appendChild(closeBtn);
-  menu.appendChild(head);
+  // ---- local time, e.g. "4:19 p.m." ----
+  var placeEl = document.getElementById('place');
+  var clockEl = document.getElementById('clock');
+  placeEl.textContent = PLACE;
 
-  var socials = el('div', 'menu-socials'); socials.style.setProperty('--i', 1);
-  LINKS.forEach(function (l) {
-    var a = el('a', 'menu-social', l.label);
-    a.href = l.href; a.target = '_blank'; a.rel = 'noopener noreferrer';
-    socials.appendChild(a);
-  });
-  menu.appendChild(socials);
-
-  var nav = el('nav', 'menu-nav'); nav.setAttribute('aria-label', 'Sections');
-  PAGES.forEach(function (p, k) {
-    var b = el('button', 'menu-item'); b.type = 'button'; b.style.setProperty('--i', k + 2);
-    b.appendChild(el('i', null, '[' + (PAGES.length - k) + ']'));
-    b.appendChild(document.createTextNode(p.label));
-    b.addEventListener('click', function () {
-      close();
-      if (p.view) { showView(p.view); return; }
-      showView(null);                                                    // leaving a full-page view for another section
-      if (p.topic && window.aliox) window.aliox.open(p.topic);
-    });
-    nav.appendChild(b);
-  });
-  menu.appendChild(nav);
-  var grid = el('button', 'menu-grid'); grid.type = 'button'; grid.setAttribute('aria-label', 'Close menu');
-  for (var d = 0; d < 4; d++) grid.appendChild(el('i'));
-  menu.appendChild(grid);
-  host.appendChild(menu);
-
-  // sits right on top of the dock, same width, growing upward (layout units, so the page scaling does not matter)
-  // Projects, Skills, Contact and About are full-page views: opening one closes the other, and null closes both
-  function showView(name) {
-    var views = { projects: window.projectsView, skills: window.skillsView, contact: window.contactView, about: window.aboutView };
-    Object.keys(views).forEach(function (k) {
-      if (!views[k]) return;
-      if (k === name) views[k].open(); else views[k].close();
-    });
+  function tickClock() {
+    var v = {};
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: TIME_ZONE, hour: 'numeric', minute: '2-digit', hour12: true
+    }).formatToParts(new Date()).forEach(function (p) { v[p.type] = p.value; });
+    var period = (v.dayPeriod || '').toLowerCase().replace(/[^ap]/g, '') + '.m.';
+    clockEl.textContent = v.hour + ':' + v.minute + ' ' + period;
   }
+  tickClock();
+  setInterval(tickClock, 15000);
 
-  function place() {
-    menu.style.left = dock.offsetLeft + 'px';
-    menu.style.width = dock.offsetWidth + 'px';
-    menu.style.bottom = (host.clientHeight - dock.offsetTop - dock.offsetHeight) + 'px';
-  }
+  // ---- stats: bars fill and numbers count up on load ----
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function show() {
-    if (open) return;
-    open = true; clearTimeout(closeTimer);
-    place();
-    menu.classList.remove('closing'); menu.classList.add('open');
-    dock.classList.add('open'); dock.setAttribute('aria-expanded', 'true');
-    var first = menu.querySelector('.menu-item'); if (first) setTimeout(function () { first.focus({ preventScroll: true }); }, 400);
-  }
-  function close() {
-    if (!open) return;
-    open = false;
-    menu.classList.remove('open'); menu.classList.add('closing');
-    dock.classList.remove('open'); dock.setAttribute('aria-expanded', 'false');
-    closeTimer = setTimeout(function () { menu.classList.remove('closing'); }, 230);
-  }
+  document.querySelectorAll('.fill').forEach(function (bar) {
+    var target = bar.dataset.fill + '%';
+    if (reduce) { bar.style.width = target; return; }
+    setTimeout(function () { bar.style.width = target; }, 500);
+  });
 
-  // the whole dock is the HOME button: the text, the bars and the icon all open the menu
-  dock.setAttribute('role', 'button'); dock.setAttribute('tabindex', '0');
-  dock.setAttribute('aria-haspopup', 'dialog'); dock.setAttribute('aria-expanded', 'false'); dock.setAttribute('aria-controls', 'menu');
-  dock.addEventListener('click', function (e) {
-    if (open) close(); else show();
+  document.querySelectorAll('[data-count]').forEach(function (el) {
+    var end = +el.dataset.count;
+    if (reduce) { el.textContent = end; return; }
+    var t0 = null, dur = 1400;
+    el.textContent = 0;
+    function step(now) {
+      if (t0 === null) t0 = now + 500;               // start with the bars
+      var t = Math.max(0, Math.min((now - t0) / dur, 1));
+      el.textContent = Math.round(end * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
   });
-  dock.addEventListener('keydown', function (e) {
-    if (e.target !== dock) return;
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (open) close(); else show(); }
-  });
-  closeBtn.addEventListener('click', close);
-  grid.addEventListener('click', close);
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { close(); } });
-  document.addEventListener('pointerdown', function (e) {                // a click anywhere else closes it
-    if (open && !menu.contains(e.target) && !dock.contains(e.target)) close();
-  });
-  window.addEventListener('resize', function () { if (open) place(); });
+
+  // ---- projects: count the public repositories (not forks) on GitHub, read-only, no key ----
+  // The answer is kept for the visit in sessionStorage. If GitHub cannot be reached the number stays as "--".
+  var projEl = document.getElementById('projCount'), projFill = document.getElementById('projFill');
+  function showProjects(n) {
+    var end = Math.max(0, +n || 0), t0 = null, dur = 1400;
+    projFill.style.width = Math.min(end / 20, 1) * 100 + '%';                // the bar is full at 20 projects
+    if (reduce) { projEl.textContent = end; return; }
+    function step(now) {
+      if (t0 === null) t0 = now;
+      var t = Math.max(0, Math.min((now - t0) / dur, 1));
+      projEl.textContent = Math.round(end * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  function countRepos(list) {
+    return Array.isArray(list) ? list.filter(function (r) { return r && !r.fork; }).length : null;
+  }
+  (function loadProjects() {
+    var key = 'home-github-count';
+    try { var c = sessionStorage.getItem(key); if (c !== null && c !== '') { showProjects(+c); return; } } catch (e) {}
+    var ctl = window.AbortController ? new AbortController() : null, timer = setTimeout(function () { if (ctl) ctl.abort(); }, 8000);
+    fetch('https://api.github.com/users/' + encodeURIComponent(GITHUB_USER) + '/repos?per_page=100&type=owner', ctl ? { signal: ctl.signal } : {})
+      .then(function (r) { clearTimeout(timer); if (!r.ok) throw new Error('http ' + r.status); return r.json(); })
+      .then(function (list) {
+        var n = countRepos(list); if (n === null) return;
+        try { sessionStorage.setItem(key, String(n)); } catch (e) {}
+        showProjects(n);
+      })
+      .catch(function () { /* leave "--" */ });
+  })();
+
+  // ---- the focus words in the top bar swap every few seconds, rolling up like a clock's digits ----
+  (function roll() {
+    var words = document.querySelectorAll('#roll .roll-w');
+    if (words.length < 2) return;
+    var box = document.getElementById('roll'), cur = 0, busy = false;
+    function fit(w) { box.style.width = Math.ceil(w.scrollWidth) + 'px'; }      // the box is as wide as the word showing, so the text after it follows
+    function fitSoon(w) { fit(w); if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(words[cur]); }); }
+    words[0].classList.add('in'); fitSoon(words[0]);
+    if (reduce) { setInterval(function () { words[cur].classList.remove('in'); cur = (cur + 1) % words.length; words[cur].classList.add('in'); fit(words[cur]); }, 3200); return; }
+    setInterval(function () {
+      if (busy || document.hidden) return;
+      busy = true;
+      var out = words[cur], next = words[(cur + 1) % words.length];
+      next.classList.add('reset'); next.classList.remove('out'); void next.offsetWidth; next.classList.remove('reset');   // park it below, no animation
+      out.classList.remove('in'); out.classList.add('out');
+      next.classList.add('in'); fit(next);
+      cur = (cur + 1) % words.length;
+      setTimeout(function () { out.classList.remove('out'); busy = false; }, 760);
+    }, 3200);
+  })();
 })();
