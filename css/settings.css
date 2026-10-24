@@ -1,0 +1,57 @@
+/* The settings panel (js/settings.js): slides in from the right edge. Black and white, like the rest. */
+.edge-tab.on{right:-6px;background:#fff}
+
+.st{
+  position:absolute;left:1130px;top:120px;width:300px;z-index:30;padding:20px 20px 18px;
+  font-family:var(--mono,"Roboto Mono",monospace);color:#fff;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.28);border-radius:12px;
+  background:
+    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px) 0 0/15px 15px,
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px) 0 0/15px 15px,
+    rgba(6,7,8,.96);
+  visibility:hidden;opacity:0;transform:translateX(40px);pointer-events:none;
+  transition:opacity .3s ease,transform .4s cubic-bezier(.2,.8,.3,1),visibility 0s linear .4s;
+}
+.st.open{visibility:visible;opacity:1;transform:none;pointer-events:auto;transition:opacity .3s ease,transform .4s cubic-bezier(.2,.8,.3,1)}
+
+.st-head{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.16)}
+.st-title{font:700 22px/1 var(--plex,var(--mono));letter-spacing:.01em;text-transform:none}
+.st-sub{display:block;margin-top:7px;font:400 9.5px/12px var(--mono);letter-spacing:.14em;color:rgba(255,255,255,.45)}
+.st-x{padding:6px 8px;border:1px solid rgba(255,255,255,.25);border-radius:6px;font:500 10px/12px var(--mono);letter-spacing:.1em;color:rgba(255,255,255,.6);transition:color .15s,border-color .15s}
+.st-x:hover{color:#fff;border-color:#fff}
+
+.st-sec{padding:16px 0 4px;border-bottom:1px solid rgba(255,255,255,.1)}
+.st-sec h3{font:500 10px/12px var(--mono);letter-spacing:.18em;color:rgba(255,255,255,.5);margin-bottom:12px}
+.st-row{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:34px;font:400 12px/16px var(--mono);letter-spacing:.04em}
+.st-row span{text-transform:none}
+.st-vol{transition:opacity .2s}
+.st-vol.off{opacity:.35}
+.st-val{width:36px;text-align:right;font:500 11px/14px var(--mono);color:rgba(255,255,255,.7)}
+
+.st-sw{position:relative;width:44px;height:24px;border:1.5px solid rgba(255,255,255,.55);border-radius:12px;background:none;transition:background .2s,border-color .2s}
+.st-sw i{position:absolute;left:3px;top:3px;width:15px;height:15px;border-radius:50%;background:rgba(255,255,255,.6);transition:transform .2s,background .2s}
+.st-sw.on{background:#f0f0f0;border-color:#f0f0f0}
+.st-sw.on i{transform:translateX(20px);background:#0a0a0a}
+.st-sw:focus-visible,.st-btn:focus-visible,.st-seg button:focus-visible,.st-reset:focus-visible,.st-x:focus-visible,.st-vol input:focus-visible{outline:1px solid #fff;outline-offset:3px}
+
+.st-vol input{flex:1;min-width:0;height:18px;background:none;-webkit-appearance:none;appearance:none;cursor:pointer}
+.st-vol input::-webkit-slider-runnable-track{height:3px;background:rgba(255,255,255,.28);border-radius:2px}
+.st-vol input::-moz-range-track{height:3px;background:rgba(255,255,255,.28);border-radius:2px}
+.st-vol input::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;margin-top:-5px;border-radius:50%;background:#fff;border:0}
+.st-vol input::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#fff;border:0}
+.st-vol input:disabled{cursor:default}
+
+.st-btn{width:100%;height:36px;margin-top:6px;border:1px solid rgba(255,255,255,.4);border-radius:6px;font:700 10.5px/1 var(--mono);letter-spacing:.14em;color:#fff;transition:background .15s,color .15s}
+.st-btn:hover:not(:disabled){background:#fff;color:#0a0a0a}
+.st-btn:disabled{opacity:.35;cursor:default}
+.st-note{margin:10px 0 12px;font:400 10px/15px var(--mono);letter-spacing:.03em;color:rgba(255,255,255,.45);text-transform:none}
+
+.st-seg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid rgba(255,255,255,.35);border-radius:6px;overflow:hidden}
+.st-seg button{height:34px;border-right:1px solid rgba(255,255,255,.2);font:500 9.5px/1 var(--mono);letter-spacing:.08em;color:rgba(255,255,255,.65);transition:background .15s,color .15s}
+.st-seg button:last-child{border-right:0}
+.st-seg button:hover{color:#fff}
+.st-seg button.on{background:#f0f0f0;color:#0a0a0a;font-weight:700}
+
+.st-reset{display:block;margin:14px auto 0;padding:4px 6px;font:400 10px/12px var(--mono);letter-spacing:.14em;color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.25);transition:color .15s}
+.st-reset:hover{color:#fff}
+@media (prefers-reduced-motion:reduce){.st,.st.open{transition:none}}

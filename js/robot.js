@@ -37,7 +37,8 @@
     onReady: function (fn) { if (ready) fn(); else readyFns.push(fn); },
     onClick: function (fn) { clickFns.push(fn); },
     isReady: function () { return ready; },
-    pose: function () { return yaw ? { yaw: yaw.p, pitch: pitch.p } : { yaw: 0, pitch: 0 }; }
+    pose: function () { return yaw ? { yaw: yaw.p, pitch: pitch.p } : { yaw: 0, pitch: 0 }; },
+    motion: function () { return yaw ? { yaw: yaw.v, pitch: pitch.v, mode: mode } : { yaw: 0, pitch: 0, mode: mode }; }   // servo speeds, for the sound (sound.js)
   };
 
   if (!host || !canvas) {
@@ -83,7 +84,7 @@
     setTimeout(becomeReady, reduce ? 300 : 1800);
   }
   if (!T) { fallback('three.min.js did not load. Check that assets/vendor/three.min.js exists'); return; }
-  if (!DATA || !DATA.rows) { fallback('robot-data.js did not load. Check that it sits next to home.html'); return; }
+  if (!DATA || !DATA.rows) { fallback('js/robot-data.js did not load. Check that the file exists'); return; }
 
   var renderer;
   try {

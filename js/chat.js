@@ -53,6 +53,9 @@
 
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, reduce ? Math.min(ms, 30) : ms); }); }
   function rand(a, b) { return a + Math.random() * (b - a); }
+  // typing speed from the settings panel (settings.js): slow 1.8, normal 1, fast 0.45, instant = no typing at all
+  function sf() { return window.settings ? window.settings.speedFactor() : 1; }
+  function instant() { return reduce || (window.settings ? window.settings.speed() === 'instant' : false); }
 
   // ---- the terminal text (everything is built with text nodes, never HTML) ----
   var cursor = document.createElement('span'); cursor.className = 'cur'; cursor.hidden = true; out.appendChild(cursor);
@@ -109,19 +112,19 @@
     else if (ch === ',' || ch === ';' || ch === ':') d += rand(50, 100);
     else if (ch === '\n') d += rand(90, 170);
     else if (Math.random() < 0.025) d += rand(80, 220);
-    return d;
+    return d * sf();
   }
   async function typeInto(piece, text, fixedMs) {
     var i = 0;
     while (i < text.length) {
       var chunk = 1;
-      if (!fixedMs && (skip || reduce)) chunk = text.length - i;
+      if (!fixedMs && (skip || instant())) chunk = text.length - i;
       else if (!fixedMs && Math.random() < 0.22) chunk = Math.min(text.length - i, 2 + Math.floor(rand(0, 3)));
       piece.node.data += text.slice(i, i + chunk);
       i += chunk;
       if (robot.pulse) robot.pulse();
       if (fixedMs) await sleep(fixedMs);
-      else if (!skip && !reduce) await sleep(delayFor(text.charAt(i - 1)));
+      else if (!skip && !instant()) await sleep(delayFor(text.charAt(i - 1)));
       else if (i % 120 === 0) await sleep(0);
     }
   }
@@ -137,7 +140,7 @@
       if (i < lines.length - 1) {
         await typeInto(addPiece('plain'), '\n', 0);
         typing(false);                                    // the cursor blinks while the next line is prepared
-        if (!skip) await sleep(lines[i].trim() === '' ? rand(90, 160) : rand(320, 560));
+        if (!skip) await sleep((lines[i].trim() === '' ? rand(90, 160) : rand(320, 560)) * sf());
       }
     }
     typing(false);                                        // the cursor stays at the end of the text, blinking
@@ -238,7 +241,7 @@
     var list = btns.querySelectorAll('.tb');
     for (var i = 0; i < list.length; i++) {
       list[i].classList.add('in');
-      if (i < list.length - 1) await sleep(140);          // no wait after the last one, so it can be clicked straight away
+      if (i < list.length - 1) await sleep(140 * sf());          // no wait after the last one, so it can be clicked straight away
     }
   }
   function lockButtons(on) { btns.querySelectorAll('.tb').forEach(function (b) { b.disabled = on; }); }
@@ -296,7 +299,7 @@
       status.textContent = label;
       var timer = setInterval(function () { dots = (dots + 1) % 4; status.textContent = label + '...'.slice(0, dots); }, 280);
       typing(false);
-      await sleep(3000);                                 // the face code runs for 3 seconds
+      await sleep(Math.max(250, 3000 * sf()));          // the face code runs for 3 seconds (shorter or longer with the speed setting)
       clearInterval(timer); status.remove();
 
       robot.glitch(200); await sleep(220);
