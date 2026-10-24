@@ -79,57 +79,79 @@
   }
   function ell(R, a) { return [CX + Math.cos(a) * R, CY + Math.sin(a) * R * TILT]; }
 
+  // the opening: ripples spread from the middle, the core wakes, the rings grow outward one after another, then each channel
+  // flies out from the core to its place along a line that draws itself, and the panel slides in last
+  var introT = 0;
+  function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function seg(t, start, dur) { return clamp01((t - start) / dur); }
+  function ease(x) { return 1 - Math.pow(1 - x, 3); }
+  function nodeIn(i) { return ease(seg(introT, 0.95 + i * 0.13, 0.75)); }
+
   function draw(dt) {
-    var t = spinT;
+    var t = spinT, it = introT;
     ctx.setTransform(pr, 0, 0, pr, 0, 0); ctx.clearRect(0, 0, STAGE_W, STAGE_H);
     var sel = current >= 0 ? nodes[current] : null;
     // dust
-    for (var i = 0; i < dust.length; i++) { var d = dust[i]; ctx.fillStyle = 'rgba(255,255,255,' + (d[2] * (0.6 + 0.4 * Math.sin(t * 0.6 + i))) + ')'; ctx.fillRect(d[0], d[1], 1.4, 1.4); }
-    // rings
+    var da = ease(seg(it, 0, 1));
+    for (var i = 0; i < dust.length; i++) { var d = dust[i]; ctx.fillStyle = 'rgba(255,255,255,' + (da * d[2] * (0.6 + 0.4 * Math.sin(t * 0.6 + i))) + ')'; ctx.fillRect(d[0], d[1], 1.4, 1.4); }
+    // three ripples spreading from the core as the page opens
+    for (var rp = 0; rp < 3; rp++) {
+      var rs = seg(it, rp * 0.22, 1.1);
+      if (rs > 0 && rs < 1) { ctx.beginPath(); ctx.ellipse(CX, CY, 20 + ease(rs) * 440, (20 + ease(rs) * 440) * TILT, 0, 0, 6.2832); ctx.strokeStyle = 'rgba(255,255,255,' + (0.5 * (1 - rs)) + ')'; ctx.lineWidth = 1.4; ctx.stroke(); }
+    }
     ctx.lineWidth = 1;
+    // rings
+    var rg = [];
     RADII.forEach(function (R, k) {
-      ctx.beginPath(); ctx.ellipse(CX, CY, R, R * TILT, 0, 0, 6.2832);
+      var s = ease(seg(it, 0.15 + k * 0.14, 0.85)); rg.push(s);
+      if (s <= 0) return;
+      ctx.beginPath(); ctx.ellipse(CX, CY, R * s, R * s * TILT, 0, 0, 6.2832);
       var on = sel && sel.ring === k;
-      ctx.strokeStyle = 'rgba(255,255,255,' + (on ? 0.7 : 0.38 - k * 0.05) + ')';
+      ctx.strokeStyle = 'rgba(255,255,255,' + ((on ? 0.7 : 0.38 - k * 0.05) * s) + ')';
       ctx.setLineDash(k % 2 ? [2, 6] : []); ctx.stroke(); ctx.setLineDash([]);
     });
     // a bright arc travelling round the chosen ring, and a quieter one on each of the others
     RADII.forEach(function (R, k) {
+      var s = rg[k]; if (s < 0.6) return;
       var on = sel && sel.ring === k, a0 = t * SPEED[k] * 2.2 + k * 1.7, len = on ? 1.5 : 0.7;
-      ctx.beginPath(); for (var a = a0; a < a0 + len; a += 0.04) { var p = ell(R, a); a === a0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
-      ctx.strokeStyle = 'rgba(255,255,255,' + (on ? 1 : 0.55) + ')'; ctx.lineWidth = on ? 2.6 : 1.8; ctx.stroke();
+      ctx.beginPath(); for (var a = a0; a < a0 + len; a += 0.04) { var p = ell(R * s, a); a === a0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]); }
+      ctx.strokeStyle = 'rgba(255,255,255,' + ((on ? 1 : 0.55) * (s - 0.6) / 0.4) + ')'; ctx.lineWidth = on ? 2.6 : 1.8; ctx.stroke();
     });
     ctx.lineWidth = 1;
-    // lines from the core to every channel; the chosen one is bright
+    // lines from the core to every channel (they draw themselves as the channel flies out); the chosen one is bright
     nodes.forEach(function (n, k) {
+      var ns = nodeIn(k); if (ns <= 0) return;
       var on = sel === n;
       ctx.beginPath(); ctx.moveTo(CX, CY); ctx.lineTo(n.x, n.y);
-      ctx.strokeStyle = 'rgba(255,255,255,' + (on ? 0.9 : 0.18) + ')'; ctx.lineWidth = on ? 1.6 : 1; ctx.stroke();
-      if (on) { var f = (t * 0.7) % 1; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(CX + (n.x - CX) * f, CY + (n.y - CY) * f, 3, 0, 6.2832); ctx.fill(); }
+      ctx.strokeStyle = 'rgba(255,255,255,' + ((on ? 0.9 : 0.18) * ns) + ')'; ctx.lineWidth = on ? 1.6 : 1; ctx.stroke();
+      if (on && ns >= 1) { var f = (t * 0.7) % 1; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(CX + (n.x - CX) * f, CY + (n.y - CY) * f, 3, 0, 6.2832); ctx.fill(); }
     });
     ctx.lineWidth = 1;
-    // core: a turning ball of points
-    var ca = Math.cos(t * 0.35), sa = Math.sin(t * 0.35);
+    // core: a turning ball of points that grows from nothing
+    var cs = ease(seg(it, 0, 0.9)), ca = Math.cos(t * 0.35 + (1 - cs) * 3), sa = Math.sin(t * 0.35 + (1 - cs) * 3);
     for (i = 0; i < core.length; i++) {
-      var c3 = core[i], x = c3[0] * ca + c3[2] * sa, z = -c3[0] * sa + c3[2] * ca, s = 1 / (1 - z * 0.25);
-      ctx.fillStyle = 'rgba(255,255,255,' + (0.18 + 0.7 * (z + 1) / 2) + ')'; ctx.fillRect(CX + x * 52 * s, CY + c3[1] * 52 * s, 1.7, 1.7);
+      var c3 = core[i], x = c3[0] * ca + c3[2] * sa, z = -c3[0] * sa + c3[2] * ca, s2 = 1 / (1 - z * 0.25);
+      ctx.fillStyle = 'rgba(255,255,255,' + ((0.18 + 0.7 * (z + 1) / 2) * cs) + ')'; ctx.fillRect(CX + x * 52 * cs * s2, CY + c3[1] * 52 * cs * s2, 1.7, 1.7);
     }
-    ctx.beginPath(); ctx.arc(CX, CY, 58, 0, 6.2832); ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.stroke();
-    ctx.beginPath(); ctx.arc(CX, CY, 58 + 8 + ((t * 14) % 22), 0, 6.2832); ctx.strokeStyle = 'rgba(255,255,255,' + (0.35 * (1 - ((t * 14) % 22) / 22)) + ')'; ctx.stroke();
-    ctx.font = '700 11px "Roboto Mono",monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.fillText('YOU', CX, CY + 4);
+    ctx.beginPath(); ctx.arc(CX, CY, 58 * cs, 0, 6.2832); ctx.strokeStyle = 'rgba(255,255,255,' + (0.6 * cs) + ')'; ctx.stroke();
+    if (cs >= 1) { ctx.beginPath(); ctx.arc(CX, CY, 58 + 8 + ((t * 14) % 22), 0, 6.2832); ctx.strokeStyle = 'rgba(255,255,255,' + (0.35 * (1 - ((t * 14) % 22) / 22)) + ')'; ctx.stroke(); }
+    ctx.font = '700 11px "Roboto Mono",monospace'; ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,255,255,' + cs + ')'; ctx.fillText('YOU', CX, CY + 4);
   }
   function place() {
-    nodes.forEach(function (n) {
-      var p = ell(RADII[n.ring], n.ang); n.x = p[0]; n.y = p[1];
-      var depth = (Math.sin(n.ang) + 1) / 2;                       // nearer (lower on the screen) nodes sit a touch larger
-      n.el.style.transform = 'translate(' + (n.x - 46).toFixed(1) + 'px,' + (n.y - 16).toFixed(1) + 'px) scale(' + (0.92 + 0.14 * depth).toFixed(3) + ')';
+    nodes.forEach(function (n, k) {
+      var ns = nodeIn(k), p = ell(RADII[n.ring], n.ang);
+      n.x = CX + (p[0] - CX) * ns; n.y = CY + (p[1] - CY) * ns;                    // flies out from the core to its ring
+      var depth = (Math.sin(n.ang) + 1) / 2;                                       // nearer (lower on the screen) nodes sit a touch larger
+      n.el.style.transform = 'translate(' + (n.x - 46).toFixed(1) + 'px,' + (n.y - 16).toFixed(1) + 'px) scale(' + ((0.92 + 0.14 * depth) * (0.55 + 0.45 * ns)).toFixed(3) + ')';
+      n.el.style.opacity = ns.toFixed(3);
+      n.el.style.pointerEvents = ns < 0.9 ? 'none' : '';
     });
   }
   function frame(now) {
     raf = requestAnimationFrame(frame);
     if (now - last < (tier === 'saver' ? 33 : 15)) return;
     var dt = Math.min((now - last) / 1000, 0.1); last = now;
-    if (!calm) spinT += dt;
+    if (!calm) { spinT += dt; introT += dt; }
     place(); draw(dt);
   }
   view.addEventListener('pointerover', function (e) { hovering = !!(e.target.closest && e.target.closest('.cv-node, .cv-panel')); });
@@ -146,7 +168,7 @@
   view.appendChild(panel);
   host.appendChild(view);
 
-  var current = -1, isOpen = false, token = 0;
+  var current = -1, isOpen = false, token = 0, panelTimer = 0;
   // (current, isOpen are used by the scene above only after they exist)
 
   // ---- helpers ----
@@ -308,13 +330,15 @@
     if (isOpen) return;
     isOpen = true;
     view.classList.add('open'); view.setAttribute('aria-hidden', 'false');
-    sizeCanvas(); hovering = false; last = 0; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
-    select(0);                                                         // always starts on the first channel
+    sizeCanvas(); hovering = false; last = 0; introT = calm ? 9 : 0; cancelAnimationFrame(raf); raf = requestAnimationFrame(frame);
+    select(0);
+    panel.classList.remove('on'); clearTimeout(panelTimer);
+    if (calm) panel.classList.add('on'); else panelTimer = setTimeout(function () { if (isOpen) panel.classList.add('on'); }, 1900);   // the panel slides in once the scene is up                                                         // always starts on the first channel
     setTimeout(function () { if (isOpen && cells[order[0]]) cells[order[0]].focus({ preventScroll: true }); }, 450);
   }
   function shut() {
     if (!isOpen) return;
-    isOpen = false; token++; cancelAnimationFrame(raf); view.classList.remove('open'); view.setAttribute('aria-hidden', 'true');
+    isOpen = false; token++; clearTimeout(panelTimer); cancelAnimationFrame(raf); view.classList.remove('open'); view.setAttribute('aria-hidden', 'true');
   }
 
   close.addEventListener('click', shut);
