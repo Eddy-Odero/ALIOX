@@ -86,4 +86,27 @@
       })
       .catch(function () { /* leave "--" */ });
   })();
+
+  // ---- the focus words in the top bar scroll upward like end credits: the word showing rises out, the next rolls up from below ----
+  (function roll() {
+    var words = document.querySelectorAll('#roll .roll-w');
+    if (words.length < 2) return;
+    var box = document.getElementById('roll'), cur = 0, busy = false, MOVE = 1200;
+    function fit(w) { box.style.width = Math.ceil(w.scrollWidth) + 'px'; }      // the box is as wide as the word showing
+    words[0].classList.add('in'); fit(words[0]);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { fit(words[cur]); });
+    setInterval(function () {
+      if (busy || document.hidden) return;
+      var out = words[cur], next = words[(cur + 1) % words.length];
+      cur = (cur + 1) % words.length;
+      if (reduce) { out.classList.remove('in'); next.classList.add('in'); fit(next); return; }
+      busy = true;
+      out.classList.remove('in'); out.classList.add('up');                       // up and out
+      next.classList.add('in'); fit(next);                                       // the next one rolls up from below
+      setTimeout(function () {
+        out.classList.add('reset'); out.classList.remove('up'); void out.offsetWidth; out.classList.remove('reset');   // back below, ready for next time
+        busy = false;
+      }, MOVE + 80);
+    }, 3800);
+  })();
 })();
