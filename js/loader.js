@@ -15,7 +15,7 @@
     progress = Math.min(cap, progress + Math.round(rand(1, 9)));
     pctEl.textContent = progress;
     fill.style.transform = 'scaleX(' + (progress / 100) + ')';
-    if (progress >= 100) { body.classList.add('ready'); enter.disabled = false; enter.focus({ preventScroll: true }); return; }
+    if (progress >= 100) { body.classList.add('ready'); enter.disabled = false; return; }
     var wait = rand(50, 220);
     if (Math.random() < 0.12) wait += rand(400, 700);        // now and then it stalls for a moment
     setTimeout(step, wait);
