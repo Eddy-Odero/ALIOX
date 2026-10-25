@@ -1,0 +1,43 @@
+/* Loading page: the dark grid, a small robot, a thin bar. When it reaches 100% the text turns into the enter button. */
+:root{
+  --mono:"Roboto Mono","IBM Plex Mono","DejaVu Sans Mono",Menlo,Consolas,monospace;
+  --bg:#111;
+  --u:clamp(.6px,calc(100vmin / 330),2.2px);   /* one scale unit; everything below is a multiple of it */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  position:relative;overflow:hidden;font-family:var(--mono);color:#e6e6e6;-webkit-font-smoothing:antialiased;
+  background:
+    linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px) 0 0/calc(var(--u)*28) calc(var(--u)*28),
+    linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px) 0 0/calc(var(--u)*28) calc(var(--u)*28),
+    var(--bg);
+  transition:opacity .5s ease;
+}
+body.leaving{opacity:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+.load{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center}
+.bot{width:calc(var(--u)*100);height:auto;color:#eee;overflow:visible}
+.ant{animation:ant 1.6s ease-in-out infinite}
+.eyes{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
+@keyframes ant{50%{opacity:.25}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+
+.bar{position:relative;width:calc(var(--u)*80);height:1px;margin-top:calc(var(--u)*14);background:rgba(255,255,255,.15)}
+.bar i{position:absolute;left:0;top:-1px;height:3px;width:100%;background:#eee;transform:scaleX(0);transform-origin:left;transition:transform .25s ease-out}
+
+.txt,.enter{margin-top:calc(var(--u)*13);font-size:calc(var(--u)*7);letter-spacing:.3em;color:#777;text-align:center;height:calc(var(--u)*30);display:flex;align-items:center;white-space:pre}
+.enter{position:absolute;bottom:0;transform:translateY(0);opacity:0;pointer-events:none;
+  height:calc(var(--u)*30);padding:0 calc(var(--u)*14);border:1px solid rgba(255,255,255,.28);border-radius:99px;background:rgba(255,255,255,.06);
+  color:#ccc;font-size:calc(var(--u)*11);letter-spacing:.04em;transition:opacity .4s,background .2s,border-color .2s}
+.enter small{white-space:nowrap;font-size:calc(var(--u)*6.5);letter-spacing:.14em;color:#8a8a8a;margin-left:calc(var(--u)*6)}
+.enter:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.5)}
+.enter:focus-visible{outline:1px solid #fff;outline-offset:3px}
+
+body.ready .txt{opacity:0}
+body.ready .enter{opacity:1;pointer-events:auto}
+body.ready .bar i{transform:scaleX(1)!important}
+.txt{transition:opacity .3s}
+
+@media (prefers-reduced-motion:reduce){.ant,.eyes{animation:none}}
