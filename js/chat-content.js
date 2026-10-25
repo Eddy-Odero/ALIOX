@@ -12,7 +12,13 @@ window.BOT_CONTENT = {
     'Hello.',
     'I am ALIOX, here to help you navigate this portfolio.',
     '',
-    'What would you like to explore?'
+    'Click a button below to learn more.'
+  ],
+  // typed under the first topic the visitor opens, to point them to the menu bar
+  menuHint: [
+    '',
+    '',
+    'To explore each section in detail, click the menu bar.'
   ],
   menuPrompt: [
     'What would you like to explore next?'

@@ -1,4 +1,4 @@
-/* Loading page: the dark grid, a small robot, a thin bar. When it reaches 100% the text turns into the enter button. */
+/* Loading page: the dark grid, a small robot, a thin bar. When it reaches 100% WELCOME appears and the home page opens. */
 :root{
   --mono:"Roboto Mono","IBM Plex Mono","DejaVu Sans Mono",Menlo,Consolas,monospace;
   --bg:#111;
@@ -27,19 +27,18 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .bar{position:relative;width:calc(var(--u)*80);height:1px;margin-top:calc(var(--u)*14);background:rgba(255,255,255,.15)}
 .bar i{position:absolute;left:0;top:-1px;height:3px;width:100%;background:#eee;transform:scaleX(0);transform-origin:left;transition:transform .25s ease-out}
 
-.txt,.enter{margin-top:calc(var(--u)*13);font-size:calc(var(--u)*7);letter-spacing:.3em;color:#777;text-align:center;height:calc(var(--u)*30);display:flex;align-items:center;white-space:pre}
-.enter{position:absolute;bottom:0;opacity:0;pointer-events:none;white-space:nowrap;
-  height:calc(var(--u)*30);padding:0 calc(var(--u)*17);font-size:calc(var(--u)*8);letter-spacing:.3em;padding-left:calc(var(--u)*17 + .3em);color:#eee;
-  transition:opacity .4s,letter-spacing .3s}
-/* corner brackets */
-.enter::before,.enter::after{content:"";position:absolute;top:0;bottom:0;width:calc(var(--u)*6);border:1px solid #eee;transition:width .3s}
-.enter::before{left:0;border-right:0}.enter::after{right:0;border-left:0}
-.enter:hover::before,.enter:hover::after{width:calc(var(--u)*10)}
-.enter:focus-visible{outline:1px solid #fff;outline-offset:4px}
-
+.txt{margin-top:calc(var(--u)*13);font-size:calc(var(--u)*7);letter-spacing:.3em;color:#777;text-align:center;height:calc(var(--u)*30);display:flex;align-items:center;white-space:pre}
+/* at 100%: the loading text goes, brackets appear close together and open out, and WELCOME fades in */
+.wel{position:absolute;bottom:0;height:calc(var(--u)*30);display:flex;align-items:center;justify-content:center;white-space:nowrap;
+  padding:0;font-size:calc(var(--u)*8);letter-spacing:.3em;color:#eee;opacity:0;
+  transition:padding 1s cubic-bezier(.2,.8,.2,1),opacity .3s}
+.wel span{opacity:0;transition:opacity .6s .45s;padding-left:.3em}
+.wel::before,.wel::after{content:"";position:absolute;top:0;bottom:0;width:calc(var(--u)*6);border:1px solid #eee}
+.wel::before{left:0;border-right:0}.wel::after{right:0;border-left:0}
 body.ready .txt{opacity:0}
-body.ready .enter{opacity:1;pointer-events:auto}
 body.ready .bar i{transform:scaleX(1)!important}
+body.ready .wel{opacity:1;padding:0 calc(var(--u)*17)}
+body.ready .wel span{opacity:1}
 .txt{transition:opacity .3s}
 
 @media (prefers-reduced-motion:reduce){.ant,.eyes{animation:none}}

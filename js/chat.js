@@ -32,6 +32,7 @@
     : ['Hello.', 'I am ALIOX, here to help you navigate this portfolio.', '', 'What would you like to explore?'];
   var MENU_PROMPT = Array.isArray(C.menuPrompt) ? C.menuPrompt
     : (typeof C.menuPrompt === 'string' && C.menuPrompt) ? [C.menuPrompt] : ['What would you like to explore next?'];
+  var MENU_HINT = Array.isArray(C.menuHint) ? C.menuHint : ['', '', 'To explore each section in detail, click the menu bar.'];
   var TOPICS = [];
   if (Array.isArray(C.topics)) {
     TOPICS = C.topics;
@@ -233,7 +234,7 @@
     TOPICS.forEach(function (t) {
       var b = document.createElement('button'); b.type = 'button'; b.className = 'tb'; b.dataset.id = t.id;
       b.textContent = '[ ' + t.label + ' ]';
-      b.addEventListener('click', function () { openTopic(t); });
+      b.addEventListener('click', function () { stopArrow(); openTopic(t); });
       btns.appendChild(b);
     });
   }
@@ -244,6 +245,31 @@
       if (i < list.length - 1) await sleep(140 * sf());          // no wait after the last one, so it can be clicked straight away
     }
   }
+  // A small arrow above the buttons hops from one to the next to show where to click. It stops at the first click.
+  var arrow = null, arrowOn = false;
+  function startArrow() {
+    var list = btns.querySelectorAll('.tb');
+    if (!list.length || reduce) return;
+    arrow = document.createElement('span'); arrow.className = 'tb-arrow';
+    arrow.innerHTML = '<svg viewBox="0 0 12 9" width="12" height="9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 1.5L6 7L10.5 1.5"/></svg>';
+    btns.appendChild(arrow); arrowOn = true;
+    (async function () {
+      var i = 0;
+      while (arrowOn) {
+        var b = list[i % list.length];
+        arrow.style.left = (b.offsetLeft + b.offsetWidth / 2 - 6) + 'px';
+        arrow.style.top = (b.offsetTop - 15) + 'px';
+        arrow.classList.add('show');
+        await sleep(950); i++;
+      }
+    })();
+  }
+  function stopArrow() {
+    if (!arrowOn) return; arrowOn = false;
+    if (arrow) { var a = arrow; a.classList.remove('show'); setTimeout(function () { a.remove(); }, 400); arrow = null; }
+  }
+  var hinted = false;
+  function dockHint() { var d = document.querySelector('.dock'); if (!d) return; d.classList.add('hint'); setTimeout(function () { d.classList.remove('hint'); }, 6000); }
   function lockButtons(on) { btns.querySelectorAll('.tb').forEach(function (b) { b.disabled = on; }); }
   function setActive(id) {
     btns.querySelectorAll('.tb').forEach(function (b) {
@@ -276,7 +302,7 @@
     robot.setMode('speak');
     try { await writeLines(INTRO); } catch (e) { showError('writing the introduction', e); }
     robot.setMode('idle');
-    try { buildButtons(); await revealButtons(); } catch (e) { showError('showing the buttons', e); }
+    try { buildButtons(); await revealButtons(); startArrow(); } catch (e) { showError('showing the buttons', e); }
     busy = false;
   }
 
@@ -305,6 +331,7 @@
       robot.glitch(200); await sleep(220);
       robot.setMode('speak'); skip = false;
       await writeLines(t.text);                          // the new text is generated
+      if (!hinted) { hinted = true; await sleep(500 * sf()); await writeLines(MENU_HINT); dockHint(); }   // once: point to the menu bar
     } catch (e) {
       showError('writing "' + t.label + '"', e);
     } finally {
@@ -330,6 +357,7 @@
     open: async function (id) {
       var t = TOPICS.filter(function (x) { return x.id === id; })[0];
       if (!t || busy || !robot.isReady()) return;
+      hinted = true; stopArrow();
       if (!started) await start();
       await openTopic(t);
     }

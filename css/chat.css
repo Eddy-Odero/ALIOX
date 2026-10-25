@@ -45,3 +45,14 @@
 .tb.in:disabled{opacity:.38;cursor:default}
 .tb.on:disabled{opacity:.9}
 .tb:focus-visible{outline:1px solid #fff;outline-offset:2px}
+
+/* the arrow that hops along the buttons */
+.tb-arrow{position:absolute;left:0;top:0;width:12px;height:9px;color:#fff;pointer-events:none;opacity:0;
+  transition:left .55s cubic-bezier(.5,0,.2,1),top .3s,opacity .3s}
+.tb-arrow.show{opacity:.9}
+.tb-arrow svg{display:block;animation:arrowBob .8s ease-in-out infinite}
+@keyframes arrowBob{50%{transform:translateY(4px)}}
+/* a soft pulse on the menu bar after ALIOX points to it */
+.dock.hint{animation:dockHint 1.6s ease-in-out 3}
+@keyframes dockHint{50%{box-shadow:0 0 0 1px rgba(255,255,255,.55),0 0 22px rgba(255,255,255,.18)}}
+@media (prefers-reduced-motion:reduce){.tb-arrow svg{animation:none}}
