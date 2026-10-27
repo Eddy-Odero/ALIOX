@@ -97,7 +97,8 @@
     if (p.img) {
       c.save(); c.beginPath(); c.rect(bx, by, bw, bh); c.clip();
       var s = Math.max(bw / p.img.width, bh / p.img.height), iw = p.img.width * s, ih = p.img.height * s;
-      c.filter = 'grayscale(1) contrast(1.1)'; c.drawImage(p.img, bx + (bw - iw) / 2, by + (bh - ih) / 2, iw, ih); c.filter = 'none';
+      var fx = typeof f.focusX === 'number' ? f.focusX : 0.5, fy = typeof f.focusY === 'number' ? f.focusY : 0.15;   // which part stays in view when the picture is cropped (0 = top/left, 1 = bottom/right)
+      c.filter = 'grayscale(1) contrast(1.1)'; c.drawImage(p.img, bx + (bw - iw) * fx, by + (bh - ih) * fy, iw, ih); c.filter = 'none';
       c.restore();
       c.strokeStyle = 'rgba(235,235,235,0.5)'; c.lineWidth = 2 * k; c.strokeRect(bx, by, bw, bh);
     } else {
@@ -201,8 +202,10 @@
       var p = { theta: theta, mesh: mesh, edges: edges, mat: m, tex: tex, ctx: cv.getContext('2d'), img: null, mix: 0 };
       mesh.userData.i = i; panels.push(p);
       drawPanel(p, i);
-      if (f.image) {                                                      // a missing picture just leaves the drawn diagram
-        var im = new Image(); im.onload = function () { p.img = im; drawPanel(p, i); }; im.src = f.image;
+      if (f.image && location.protocol === 'file:') {                      // opened by double-clicking the file: the browser blocks pictures in 3D
+        if (!window.__aboutFileWarn) { window.__aboutFileWarn = 1; console.warn('about: pictures need a local server (the page was opened as a file). See the note in about-data.js.'); }
+      } else if (f.image) {                                                      // a missing picture just leaves the drawn diagram
+        var im = new Image(); im.onload = function () { p.img = im; drawPanel(p, i); }; im.onerror = function () { console.warn('about: picture not found: ' + f.image + ' (check the path and the file extension)'); }; im.src = f.image;
       }
     });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { panels.forEach(function (p, i) { drawPanel(p, i); }); });
