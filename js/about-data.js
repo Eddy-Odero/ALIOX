@@ -10,15 +10,15 @@ window.ABOUT = {
   frames: [
     { title: 'GOPHERCON AFRICA 26', cap: 'GOPHERCON AFRICA', image: 'assets/about/gophercon.jpeg', focusY: 0,
       text: 'At GopherCon Africa, the conference of the Go community. Go is the language I am building my backend skills in.' },
-    { title: 'WHO I AM', cap: 'EDWARD ODERO',
+    { title: 'WHO I AM', cap: 'EDWARD ODERO', image: 'assets/about/me.jpg', focusY: 0.15,
       text: 'I am Edward Odero, but everyone calls me Eddy. I am a full-stack developer, and I build both sides of an app, from the vanilla JavaScript frontend to the Go backend.' },
-    { title: 'ZONE01 KISUMU', cap: 'ZONE01 KISUMU',
+    { title: 'ZONE01 KISUMU', cap: 'ZONE01 KISUMU', image: 'assets/about/zone01.jpg', focusY: 0.15,
       text: 'I am an apprentice developer at zone01 in Kisumu, Kenya. I learn by building real projects alongside my peers rather than from lectures.' },
-    { title: 'HOW I WORK', cap: 'HOW I WORK',
+    { title: 'HOW I WORK', cap: 'HOW I WORK', image: 'assets/about/work.jpg', focusY: 0.15,
       text: 'I like to understand why something works, not only to get it working, and I prefer small, careful changes to rewriting everything.' },
-    { title: 'FOCUS', cap: 'FOCUS',
+    { title: 'FOCUS', cap: 'FOCUS', image: 'assets/about/focus.jpg', focusY: 0.15,
       text: 'Machine learning, system design and development, with over three years of experience. I am open to new opportunities and collaborations.' },
-    { title: 'KISUMU, KENYA', cap: 'KISUMU, KENYA',
+    { title: 'KISUMU, KENYA', cap: 'KISUMU, KENYA', image: 'assets/about/kisumu.jpg', focusY: 0.15,
       text: 'I am based in Kisumu, on East Africa Time (UTC+3). I am also interested in software entrepreneurship.' }
   ]
 };
