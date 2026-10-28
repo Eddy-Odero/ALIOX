@@ -8,7 +8,7 @@ window.ABOUT = {
   line: ['Full-stack developer. Apprentice at zone01 Kisumu.', 'Vanilla JS frontends, Go backends.'],
   hint: 'THE GLASS RING TURNS. CLICK A PANEL, OR USE THE ARROW KEYS',
   frames: [
-    { title: 'GOPHERCON AFRICA 26', cap: 'GOPHERCON AFRICA', image: 'assets/about/gophercon.jpg', focusY: 0,
+    { title: 'GOPHERCON AFRICA 26', cap: 'GOPHERCON AFRICA', image: 'assets/about/gophercon.jpeg', focusY: 0,
       text: 'At GopherCon Africa, the conference of the Go community. Go is the language I am building my backend skills in.' },
     { title: 'WHO I AM', cap: 'EDWARD ODERO',
       text: 'I am Edward Odero, but everyone calls me Eddy. I am a full-stack developer, and I build both sides of an app, from the vanilla JavaScript frontend to the Go backend.' },
