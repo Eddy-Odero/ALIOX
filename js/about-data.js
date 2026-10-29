@@ -5,20 +5,20 @@
        focusY: optional, 0 to 1, which part of a tall picture stays visible (0 = the top, so heads are kept; default 0.15), focusX: same for wide pictures (default 0.5) */
 window.ABOUT = {
   name: 'EDWARD ODERO',
-  line: ['Full-stack developer. Apprentice at zone01 Kisumu.', 'Vanilla JS frontends, Go backends.'],
+  line: ['Full-stack engineer building systems that hold up.', 'Go backends, distributed systems and the interfaces around them.'],
   hint: 'THE GLASS RING TURNS. CLICK A PANEL, OR USE THE ARROW KEYS',
   frames: [
-    { title: 'GOPHERCON AFRICA 26', cap: 'GOPHERCON AFRICA', image: 'assets/about/gophercon.jpeg', focusY: 0,
-      text: 'At GopherCon Africa, the conference of the Go community. Go is the language I am building my backend skills in.' },
+    { title: 'GOPHERCON AFRICA 26', cap: 'GOPHERCON AFRICA', image: 'assets/about/gophercon.jpg', focusY: 0,
+      text: 'At GopherCon Africa, the conference of the Go community. Go is the language behind most of what I build.' },
     { title: 'WHO I AM', cap: 'EDWARD ODERO', image: 'assets/about/me.jpg', focusY: 0.15,
-      text: 'I am Edward Odero, but everyone calls me Eddy. I am a full-stack developer, and I build both sides of an app, from the vanilla JavaScript frontend to the Go backend.' },
+      text: 'I am Eddy, a full-stack engineer in Kisumu, Kenya, building systems that hold up. I design and ship Go-based backends, distributed systems and the interfaces around them, from hackathon platforms to a boutique\'s point-of-sale system.' },
     { title: 'ZONE01 KISUMU', cap: 'ZONE01 KISUMU', image: 'assets/about/zone01.jpg', focusY: 0.15,
-      text: 'I am an apprentice developer at zone01 in Kisumu, Kenya. I learn by building real projects alongside my peers rather than from lectures.' },
-    { title: 'HOW I WORK', cap: 'HOW I WORK', image: 'assets/about/work.jpg', focusY: 0.15,
-      text: 'I like to understand why something works, not only to get it working, and I prefer small, careful changes to rewriting everything.' },
-    { title: 'FOCUS', cap: 'FOCUS', image: 'assets/about/focus.jpg', focusY: 0.15,
-      text: 'Machine learning, system design and development, with over three years of experience. I am open to new opportunities and collaborations.' },
-    { title: 'KISUMU, KENYA', cap: 'KISUMU, KENYA', image: 'assets/about/kisumu.jpg', focusY: 0.15,
-      text: 'I am based in Kisumu, on East Africa Time (UTC+3). I am also interested in software entrepreneurship.' }
+      text: 'Full-stack developer at zone01 Kisumu since April 2026. Before that I was in tech support there, from June 2024 to January 2025, looking after Ubuntu systems and automating them with Ansible.' },
+    { title: 'SCHOOL AND MENTORING', cap: 'LEARNING', image: 'assets/about/school.jpg', focusY: 0.15,
+      text: 'I studied Information Technology at Maseno University (2022 to 2024) and Business Management at the University of Nairobi (2019 to 2022). In 2022 I was a STEM mentor with Young Scientist Kenya.' },
+    { title: 'KISUMU BITCOIN BOOTCAMP', cap: 'BITCOIN BOOTCAMP', image: 'assets/about/bootcamp.jpg', focusY: 0.15,
+      text: 'I am part of the Kisumu Bitcoin Bootcamp community and have worked on Lightning Network-powered projects. My team of seven won the 2026 hackathon with SatGate.' },
+    { title: 'OFF THE KEYBOARD', cap: 'OFF THE KEYBOARD', image: 'assets/about/offkeys.jpg', focusY: 0.15,
+      text: 'Drawing, designing, building, coding and anime. I work on production-grade tools on my own and with hackathon teams, and I am open to work.' }
   ]
 };
