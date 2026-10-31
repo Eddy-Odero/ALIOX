@@ -1,8 +1,3 @@
-/* The menu that springs up when the HOME dock is clicked.
-   No backend: the links below are plain links. About / Contact / Skills ask ALIOX (chat.js) to open that topic,
-   exactly as if the visitor had clicked its button. Projects and Skills open their own full-page views (projects.js, skills.js). HOME closes the menu.
-
-   Put your real addresses in LINKS. Add or remove a line to change the socials. */
 (function () {
   'use strict';
 
