@@ -1,11 +1,4 @@
-/* The About view. Opens from the menu (About). The portrait is a real 3D point cloud made from the hooded-figure image:
-   about 115,000 points with a depth each (js/about-points.js), drawn with WebGL (Three.js). It assembles when the view opens,
-   turns slightly as the mouse moves, and its loose dust drifts.
-   Around it turns a ring of curved glass panels, one per frame (js/about-data.js). They live in the same 3D scene, so the near
-   panels pass in front of the figure and the far ones behind it, and from behind you see a panel's picture mirrored through the glass.
-   Choosing a panel (click, or the arrow keys) turns the ring to bring it forward and shows its text; after a short rest the ring
-   carries on. Esc or CLOSE leaves it. No backend. The performance tier from the landing page (localStorage "tier") sets resolution,
-   how many points are drawn and how smooth the panels are; ?calm in the address turns the motion off. */
+
 (function () {
   'use strict';
 
