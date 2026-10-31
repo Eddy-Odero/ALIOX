@@ -1,7 +1,4 @@
-/* The contact view. Opens from the menu (Contact). Channels sit on a trail in groups; choosing one fills the panel on the right:
-   the address and a mail form, a CV preview, the latest Dev.to articles, the latest GitHub repositories, and so on.
-   Esc or CLOSE leaves it. No backend and no key: the only outside requests are two read-only public APIs (Dev.to, GitHub),
-   kept for the visit in sessionStorage, and the page shows a plain link if they fail. Content is in contact-data.js. */
+
 (function () {
   'use strict';
 
