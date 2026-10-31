@@ -1,8 +1,4 @@
-/* The About view (js/about.js). Edit this file, no other code needs to change.
-   - name, line: the text at the bottom left
-   - frames:     the glass panels that turn around the portrait, in order. Choosing one brings it forward and shows its text on the right.
-       title: heading, cap: small line on the card, text: shown on the right, image: optional picture (leave out for a plain card),
-       focusY: optional, 0 to 1, which part of a tall picture stays visible (0 = the top, so heads are kept; default 0.15), focusX: same for wide pictures (default 0.5) */
+
 window.ABOUT = {
   name: 'EDWARD ODERO',
   line: ['Full-stack engineer building systems that hold up.', 'Go backends, distributed systems and the interfaces around them.'],
