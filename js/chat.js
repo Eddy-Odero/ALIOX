@@ -1,10 +1,4 @@
-/* ALIOX's terminal. No typing by the visitor and no server: they click the robot, then choose a topic.
-   What ALIOX says lives in chat-content.js.
 
-   Click the robot  -> the developer stats fly off to the right -> ALIOX introduces itself line by line -> the buttons appear.
-   Click a topic    -> the current text flies off to the right -> the face code runs for 3 seconds -> the new text is
-                       generated one line at a time, with a blinking cursor at the end of the text.
-   Click on the text while it is being typed to show the rest at once. */
 (function () {
   'use strict';
 
