@@ -7,8 +7,8 @@
   'use strict';
 
   var LINKS = [
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/YOUR-LINKEDIN-NAME' },
-    { label: 'Dev.to',   href: 'https://dev.to/YOUR-DEVTO-NAME' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/eddy-odero-7b3332346' },
+    { label: 'Dev.to',   href: 'https://dev.to/edd_odero' },
     { label: 'Github',   href: 'https://github.com/Eddy-Odero' }
   ];
   // top to bottom. "topic" matches an id in chat-content.js. The number is shown in front of the name.
