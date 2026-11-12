@@ -42,7 +42,8 @@
 .sv-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:10px 0 8px;border-bottom:1px solid rgba(255,255,255,.15);cursor:default;animation:svRow .35s cubic-bezier(.2,.8,.3,1) both;animation-delay:calc(var(--r,0) * .07s)}
 .sv-k{display:block;font:400 9.5px/12px var(--mono);letter-spacing:.14em;color:rgba(255,255,255,.5)}
 .sv-v{display:block;margin-top:4px;font:500 15px/20px var(--mono);letter-spacing:.01em;text-transform:none}
-.sv-n{font:400 11px/16px var(--mono);color:rgba(255,255,255,.4);transition:color .15s}
+.sv-n{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;font:700 10px/1 var(--mono);color:rgba(255,255,255,.55);transition:color .15s}
+.sv-n svg{width:20px;height:20px}
 .sv-row:hover .sv-n{color:#fff}
 .sv-panel.swap .sv-title,.sv-panel.swap .sv-about,.sv-panel.swap .sv-cmd{animation:svRise .35s ease both}
 @keyframes svRow{0%{opacity:0;translate:-10px 0}100%{opacity:1;translate:0 0}}
