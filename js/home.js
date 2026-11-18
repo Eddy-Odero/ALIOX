@@ -1,7 +1,7 @@
 (function () {
   // ---- settings you can change ----
   var PLACE = 'Kisumu/Nairobi';     
-  var TIME_ZONE = 'Africa/Nairobi'; // clock follows this zone
+  var TIME_ZONE = 'Africa/Nairobi';
   var GITHUB_USER = 'Eddy-Odero';   // the PROJECTS count is this account's public repositories, so it grows by itself
 
   // ---- fit the 1475 x 720 design canvas to the window ----
