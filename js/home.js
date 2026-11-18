@@ -1,5 +1,5 @@
 (function () {
-  // ---- settings you can change ----
+ 
   var PLACE = 'Kisumu/Nairobi';     
   var TIME_ZONE = 'Africa/Nairobi';
   var GITHUB_USER = 'Eddy-Odero';   
