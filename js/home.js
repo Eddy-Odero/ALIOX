@@ -55,7 +55,7 @@
     requestAnimationFrame(step);
   });
 
-  // ---- projects: count the public repositories (not forks) on GitHub, read-only, no key ----
+ 
   // The answer is kept for the visit in sessionStorage. If GitHub cannot be reached the number stays as "--".
   var projEl = document.getElementById('projCount'), projFill = document.getElementById('projFill');
   function showProjects(n) {
