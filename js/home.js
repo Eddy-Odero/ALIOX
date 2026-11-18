@@ -1,6 +1,6 @@
 (function () {
   // ---- settings you can change ----
-  var PLACE = 'Kisumu/Nairobi';     // shown before the time
+  var PLACE = 'Kisumu/Nairobi';     
   var TIME_ZONE = 'Africa/Nairobi'; // clock follows this zone
   var GITHUB_USER = 'Eddy-Odero';   // the PROJECTS count is this account's public repositories, so it grows by itself
 
