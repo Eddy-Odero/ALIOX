@@ -60,7 +60,7 @@
   var projEl = document.getElementById('projCount'), projFill = document.getElementById('projFill');
   function showProjects(n) {
     var end = Math.max(0, +n || 0), t0 = null, dur = 1400;
-    projFill.style.width = Math.min(end / 20, 1) * 100 + '%';                // the bar is full at 20 projects
+    projFill.style.width = Math.min(end / 20, 1) * 100 + '%';                
     if (reduce) { projEl.textContent = end; return; }
     function step(now) {
       if (t0 === null) t0 = now;
