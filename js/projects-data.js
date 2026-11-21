@@ -1,4 +1,11 @@
-
+/* The projects shown in the project index (projects.js). Edit this file, no other code needs to change.
+   - name:        shown in the list on the right and as the title of the card
+   - description: shown at the top left when the project is selected
+   - image:       a picture for the project. Put it in assets/projects/ (about 3:2, for example 1200x800).
+                  If the file is missing, a plain card with the project name is shown instead.
+   - meta:        the rows under the picture, [label, value]
+   - links:       buttons under the rows, [label, address]
+   The order here is the order in the list. */
 window.PROJECTS = [
   {
     name: 'WAPI',
@@ -15,25 +22,18 @@ window.PROJECTS = [
     links: [['CODE', 'https://github.com/Eddy-Odero']]
   },
   {
-    name: 'AIDSTREAM',
-    description: 'An aid distribution platform with full authentication, role-based routing, case management, donations and an admin dashboard.',
-    image: 'assets/projects/aidstream.jpg',
-    meta: [['STACK', 'GO / NEON POSTGRES'], ['TYPE', 'PERSONAL'], ['FOCUS', 'ROLES / CASES']],
-    links: [['CODE', 'https://github.com/Eddy-Odero']]
+    name: 'STAR HUNTERS',
+    description: 'A team hackathon project for the NASA SPHEREx sky-viewer challenge: a public web tool that shows patches of the sky as a multi-epoch video, so moving objects stand out. Made to be usable by people who are not astronomers.',
+    image: 'assets/projects/star-hunters.png',
+    meta: [['STACK', 'REACT / TYPESCRIPT / FASTAPI'], ['TYPE', 'TEAM HACKATHON'], ['CHALLENGE', 'NASA SPHEREX']],
+    links: [['CODE', 'https://github.com/Eddy-Odero/star-hunters']]
   },
   {
     name: 'EDU-FLIX',
     description: 'A Netflix-style streaming platform with JWT authentication, bcrypt, Gmail-based password reset and CI through GitHub Actions, deployed on Render.',
     image: 'assets/projects/edu-flix.png',
     meta: [['STACK', 'GO / SQLITE + TURSO'], ['TYPE', 'PERSONAL'], ['STATUS', 'LIVE']],
-    links: [['LIVE SITE', 'https://edu-flix1.onrender.com'], ['CODE', 'https://github.com/Eddy-Odero/EDU-FLIX']]
-  },
-  {
-    name: 'BLUE-TALK',
-    description: 'A decentralized mesh messaging and file-transfer app with multi-hop routing, store-and-forward and an optional supernode.',
-    image: 'assets/projects/blue-talk.jpg',
-    meta: [['STACK', 'GO / SQLITE'], ['TYPE', 'PERSONAL'], ['STATUS', 'ONGOING']],
-    links: [['CODE', 'https://github.com/Eddy-Odero']]
+    links: [['LIVE SITE', 'https://edu-flix.onrender.com'], ['CODE', 'https://github.com/Eddy-Odero/EDU-FLIX']]
   },
   {
     name: 'TINAH COSMETICS',
@@ -52,7 +52,7 @@ window.PROJECTS = [
   {
     name: 'THIS PORTFOLIO',
     description: 'Plain HTML, CSS and JavaScript. ALIOX, the robot you are talking to, follows your cursor and answers from a small script, with no server and no API key.',
-    image: 'assets/projects/portfolio.jpg',
+    image: 'assets/projects/portfolio.png',
     meta: [['STACK', 'HTML / CSS / JAVASCRIPT'], ['3D', 'THREE.JS'], ['BACKEND', 'NONE']],
     links: []
   }
