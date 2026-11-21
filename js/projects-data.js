@@ -10,7 +10,7 @@ window.PROJECTS = [
   {
     name: 'SATGATE',
     description: 'A Lightning Network-powered anti-spam contact form, built by a team of seven and winner of the Kisumu Bitcoin Bootcamp Hackathon 2026. I built the frontend loading states: a Bitcoin pulse loader, shimmer skeletons and a progress bar.',
-    image: 'assets/projects/satgate.jpg',
+    image: 'assets/projects/satgate.png',
     meta: [['STACK', 'FRONTEND / LIGHTNING'], ['TYPE', 'TEAM OF 7'], ['RESULT', 'HACKATHON WINNER']],
     links: [['CODE', 'https://github.com/Eddy-Odero']]
   },
@@ -26,7 +26,7 @@ window.PROJECTS = [
     description: 'A Netflix-style streaming platform with JWT authentication, bcrypt, Gmail-based password reset and CI through GitHub Actions, deployed on Render.',
     image: 'assets/projects/edu-flix.png',
     meta: [['STACK', 'GO / SQLITE + TURSO'], ['TYPE', 'PERSONAL'], ['STATUS', 'LIVE']],
-    links: [['LIVE SITE', 'https://edu-flix.onrender.com'], ['CODE', 'https://github.com/Eddy-Odero/EDU-FLIX']]
+    links: [['LIVE SITE', 'https://edu-flix1.onrender.com'], ['CODE', 'https://github.com/Eddy-Odero/EDU-FLIX']]
   },
   {
     name: 'BLUE-TALK',
