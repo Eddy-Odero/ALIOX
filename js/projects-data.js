@@ -38,14 +38,14 @@ window.PROJECTS = [
   {
     name: 'TINAH COSMETICS',
     description: 'A boutique operating system: a PIN-secured point of sale paired with an e-commerce site, sharing one data layer, with M-Pesa, cash and card payments.',
-    image: 'assets/projects/tinah-cosmetics.jpg',
+    image: 'assets/projects/maison-pos.png',
     meta: [['STACK', 'BROWSER POS'], ['TYPE', 'PERSONAL'], ['PAYMENTS', 'M-PESA / CASH / CARD']],
     links: [['CODE', 'https://github.com/Eddy-Odero']]
   },
   {
     name: 'PROFILE-ENGINE',
     description: 'A custom GitHub profile README generator with a cyberpunk HUD look, driven by a Python pipeline and GitHub Actions.',
-    image: 'assets/projects/profile-engine.jpg',
+    image: 'assets/projects/profile-engine.png',
     meta: [['STACK', 'PYTHON / SVG'], ['TYPE', 'PERSONAL'], ['AUTOMATION', 'GITHUB ACTIONS']],
     links: [['CODE', 'https://github.com/Eddy-Odero']]
   },
