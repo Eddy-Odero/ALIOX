@@ -26,7 +26,7 @@ window.PROJECTS = [
     description: 'A team hackathon project for the NASA SPHEREx sky-viewer challenge: a public web tool that shows patches of the sky as a multi-epoch video, so moving objects stand out. Made to be usable by people who are not astronomers.',
     image: 'assets/projects/star-hunters.png',
     meta: [['STACK', 'REACT / TYPESCRIPT / FASTAPI'], ['TYPE', 'TEAM HACKATHON'], ['CHALLENGE', 'NASA SPHEREX']],
-    links: [['CODE', 'https://github.com/Eddy-Odero/star-hunters']]
+    links: [['LIVE SITE', 'https://star-hunters-spherex.fly.dev/'], ['CODE', 'https://github.com/Eddy-Odero/star-hunters']]
   },
   {
     name: 'EDU-FLIX',
@@ -52,7 +52,7 @@ window.PROJECTS = [
   {
     name: 'THIS PORTFOLIO',
     description: 'Plain HTML, CSS and JavaScript. ALIOX, the robot you are talking to, follows your cursor and answers from a small script, with no server and no API key.',
-    image: 'assets/projects/portfolio.png',
+    image: 'assets/projects/ALIOX.png',
     meta: [['STACK', 'HTML / CSS / JAVASCRIPT'], ['3D', 'THREE.JS'], ['BACKEND', 'NONE']],
     links: []
   }
