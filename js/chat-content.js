@@ -1,4 +1,9 @@
-
+/* What ALIOX says. Edit this file, no other code needs to change.
+   - intro: typed when the visitor clicks the robot. menuPrompt: typed when the sparkle button on the dock is used again.
+   - topics: one button each. "label" is the button text, "text" is a list of paragraphs.
+   - Paragraphs wrap automatically to "columns" characters. A line starting with "- " becomes a bullet.
+     Indent a line with spaces to indent it. An empty string "" gives a blank line.
+   - Links: write [[label|https://address]]. */
 window.BOT_CONTENT = {
   name: 'ALIOX',
   columns: 54,
@@ -45,7 +50,7 @@ window.BOT_CONTENT = {
         '  A Netflix-style streaming platform with JWT auth, built in Go and deployed on Render.',
         '  Live    [[edu-flix.onrender.com|https://edu-flix.onrender.com]]',
         '',
-        'There is more: AidStream, Blue-talk, Tinah Cosmetics and Profile-Engine. Open the menu bar and choose Projects to see them all.'
+        'There is more: Star Hunters, a NASA SPHEREx hackathon project, plus Tinah Cosmetics and Profile-Engine. Open the menu bar and choose Projects to see them all.'
       ]
     },
     {
