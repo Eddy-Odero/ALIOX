@@ -1,8 +1,8 @@
 (function () {
-  // ---- settings you can change ----
-  var PLACE = 'Kisumu/Nairobi';     // shown before the time
-  var TIME_ZONE = 'Africa/Nairobi'; // clock follows this zone
-  var GITHUB_USER = 'Eddy-Odero';   // the PROJECTS count is this account's public repositories, so it grows by itself
+ 
+  var PLACE = 'Kisumu/Nairobi';     
+  var TIME_ZONE = 'Africa/Nairobi';
+  var GITHUB_USER = 'Eddy-Odero';   
 
   // ---- fit the 1475 x 720 design canvas to the window ----
   var W = 1475, H = 720;
@@ -55,12 +55,12 @@
     requestAnimationFrame(step);
   });
 
-  // ---- projects: count the public repositories (not forks) on GitHub, read-only, no key ----
+ 
   // The answer is kept for the visit in sessionStorage. If GitHub cannot be reached the number stays as "--".
   var projEl = document.getElementById('projCount'), projFill = document.getElementById('projFill');
   function showProjects(n) {
     var end = Math.max(0, +n || 0), t0 = null, dur = 1400;
-    projFill.style.width = Math.min(end / 20, 1) * 100 + '%';                // the bar is full at 20 projects
+    projFill.style.width = Math.min(end / 20, 1) * 100 + '%';                
     if (reduce) { projEl.textContent = end; return; }
     function step(now) {
       if (t0 === null) t0 = now;

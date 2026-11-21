@@ -76,6 +76,22 @@
 
   function path(pts) { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); }
 
+  // the technology's mark, laid flat on the top of its block (the page's own flat projection is a plain affine map, so the mark is drawn through it)
+  var markCache = {};
+  function drawMark(tech, t, lit) {
+    var ic = markCache[tech] || (markCache[tech] = window.skillIcon ? window.skillIcon(tech) : { text: '?' });
+    var ux = t[1][0] - t[0][0], uy = t[1][1] - t[0][1], vx = t[3][0] - t[0][0], vy = t[3][1] - t[0][1];
+    ctx.save(); ctx.transform(ux / 48, uy / 48, vx / 48, vy / 48, t[0][0], t[0][1]);   // the block's top is 48 x 48 in this space
+    ctx.fillStyle = '#0a0a0a';
+    if (ic.path) {
+      if (!ic.p2d) ic.p2d = new Path2D(ic.path);
+      ctx.translate(10, 10); ctx.scale(28 / 24, 28 / 24); ctx.fill(ic.p2d);
+    } else {
+      ctx.font = '700 ' + (ic.text.length > 3 ? 11 : 14) + 'px "Roboto Mono",monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(ic.text, 24, 25);
+    }
+    ctx.restore();
+  }
+
   function drawLayer(k) {
     var on = k === sel, hov = k === hoverLayer && !on, z = zOf(k), ox = oxOf(k), a = on ? 1 : hov ? 0.8 : 0.5;
     var p = corners(k);
@@ -102,7 +118,7 @@
       ctx.beginPath(); ctx.moveTo(t[1][0], t[1][1]); ctx.lineTo(bs[1][0], bs[1][1]); ctx.lineTo(bs[2][0], bs[2][1]); ctx.lineTo(t[1][0], t[1][1]); ctx.lineTo(t[2][0], t[2][1]); ctx.closePath();
       ctx.fillStyle = on ? 'rgba(150,150,150,0.8)' : 'rgba(255,255,255,0.08)'; ctx.fill();
       path(t); ctx.fillStyle = on ? (lit ? '#fff' : 'rgba(255,255,255,0.9)') : 'rgba(255,255,255,0.22)'; ctx.fill();
-      if (on) { var m = iso(x + w / 2, y + h / 2, z + ht, ox); ctx.font = '700 10px "Roboto Mono",monospace'; ctx.textAlign = 'center'; ctx.fillStyle = '#000'; ctx.fillText(pad(j + 1), m[0], m[1] + 3.5); }
+      if (on) drawMark(it[1], t, lit);
     });
   }
 
@@ -120,6 +136,15 @@
     for (var k = 0; k < N; k++) { var c = iso(-S, S, zOf(k), oxOf(k)); labs[k].style.transform = 'translateY(' + (c[1] - 12).toFixed(1) + 'px)'; labs[k].style.opacity = String(Math.min(build * 1.4, 1)); }
   }
 
+  function badge(tech) {
+    var ic = window.skillIcon ? window.skillIcon(tech) : { text: '?' }, b = el('span', 'sv-n');
+    if (ic.path) {
+      var s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'), p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      s.setAttribute('viewBox', '0 0 24 24'); s.setAttribute('aria-hidden', 'true'); p.setAttribute('d', ic.path); p.setAttribute('fill', 'currentColor'); s.appendChild(p); b.appendChild(s);
+    } else b.textContent = ic.text;
+    return b;
+  }
+
   function select(k) {
     if (k < 0 || k >= N) return;
     sel = k; hoverItem = -1;
@@ -130,7 +155,7 @@
     (c.items || []).forEach(function (it, j) {
       var li = el('li', 'sv-row'); li.style.setProperty('--r', j);
       var d = el('div'); d.appendChild(el('span', 'sv-k', it[0])); d.appendChild(el('span', 'sv-v', it[1]));
-      li.appendChild(d); li.appendChild(el('span', 'sv-n', pad(j + 1)));
+      li.appendChild(d); li.appendChild(badge(it[1]));
       li.addEventListener('pointerenter', function () { hoverItem = j; });
       li.addEventListener('pointerleave', function () { hoverItem = -1; });
       list.appendChild(li);
